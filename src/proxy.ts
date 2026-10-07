@@ -16,5 +16,5 @@ export function proxy() {
 }
 
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|api/health|icon).*)"],
+  matcher: ["/((?!_next/static|_next/image|api/health|health|icon).*)"],
 };
