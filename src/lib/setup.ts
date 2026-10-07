@@ -10,6 +10,15 @@ export function missingSettings() {
   return missing;
 }
 
+// Vercel's servers can't keep uploaded files, so uploads there need a Blob
+// store; elsewhere they are saved to the local disk.
+export function uploadsNeedBlobStore() {
+  return Boolean(process.env.VERCEL) && !process.env.BLOB_READ_WRITE_TOKEN;
+}
+
+export const BLOB_STORE_MISSING =
+  "Photo and file storage isn't connected yet. In Vercel, open the project → Storage → connect a Blob store, then redeploy from Deployments. After that, uploads will work.";
+
 export function explainDatabaseError(error: unknown) {
   const text = String(
     error instanceof Error ? `${error.message} ${error.cause ?? ""}` : error,

@@ -1,6 +1,11 @@
 import config from "@payload-config";
 import { getPayload } from "payload";
-import { explainDatabaseError, missingSettings } from "@/lib/setup";
+import {
+  BLOB_STORE_MISSING,
+  explainDatabaseError,
+  missingSettings,
+  uploadsNeedBlobStore,
+} from "@/lib/setup";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +21,16 @@ export async function GET() {
   try {
     const payload = await getPayload({ config });
     await payload.count({ collection: "journey" });
-    return Response.json({ ok: true, database: "connected" });
+    const uploads = process.env.BLOB_READ_WRITE_TOKEN
+      ? "Vercel Blob"
+      : "local disk";
+    if (uploadsNeedBlobStore()) {
+      return Response.json(
+        { ok: false, database: "connected", problems: [BLOB_STORE_MISSING] },
+        { status: 503 },
+      );
+    }
+    return Response.json({ ok: true, database: "connected", uploads });
   } catch (error) {
     console.error("Health check failed:", error);
     return Response.json(

@@ -1,4 +1,5 @@
-import type { CollectionConfig } from "payload";
+import { APIError, type CollectionConfig } from "payload";
+import { BLOB_STORE_MISSING, uploadsNeedBlobStore } from "@/lib/setup";
 import { editorOnly, publicOrLoggedIn } from "../access";
 import { dateField } from "../fields";
 
@@ -23,6 +24,19 @@ export const Media: CollectionConfig = {
     ],
   },
   hooks: {
+    // Explain a missing Blob store instead of failing with a disk error.
+    beforeOperation: [
+      ({ operation, req }) => {
+        const uploading = operation === "create" || Boolean(req.file);
+        if (uploading && uploadsNeedBlobStore()) {
+          const error = new APIError(BLOB_STORE_MISSING, 400, null, true);
+          // Payload only shows messages of named errors, and minified builds
+          // lose the class name.
+          error.name = "StorageNotConnected";
+          throw error;
+        }
+      },
+    ],
     // Anything showing identifiable patients without consent stays private.
     beforeChange: [
       ({ data }) => {
