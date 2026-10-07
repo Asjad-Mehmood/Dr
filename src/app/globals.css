@@ -11,21 +11,23 @@
   --primary-soft: #e2f0ec;
   --accent: #b9475f;
   --accent-soft: #f8e5e9;
+  color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c1615;
-    --surface: #12201e;
-    --ink: #e8f1ef;
-    --muted: #9cb2ad;
-    --line: #22342f;
-    --primary: #5bbfb2;
-    --primary-ink: #08201d;
-    --primary-soft: #15302c;
-    --accent: #e8899d;
-    --accent-soft: #3a1f27;
-  }
+/* Cream is the default; the header toggle switches to dark and the choice is
+   remembered (see ThemeToggle and the script in the root layout). */
+:root[data-theme="dark"] {
+  --background: #0c1615;
+  --surface: #12201e;
+  --ink: #e8f1ef;
+  --muted: #9cb2ad;
+  --line: #22342f;
+  --primary: #5bbfb2;
+  --primary-ink: #08201d;
+  --primary-soft: #15302c;
+  --accent: #e8899d;
+  --accent-soft: #3a1f27;
+  color-scheme: dark;
 }
 
 @theme inline {
