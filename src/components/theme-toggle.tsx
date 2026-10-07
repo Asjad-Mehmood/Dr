@@ -6,7 +6,7 @@ import { THEME_STORAGE_KEY } from "./theme";
 type Theme = "light" | "dark";
 
 // The theme lives on <html data-theme>, set before paint by the script in the
-// root layout. Subscribe to that attribute so every toggle stays in sync.
+// site layout. Subscribe to that attribute so every toggle stays in sync.
 function subscribe(onChange: () => void) {
   const observer = new MutationObserver(onChange);
   observer.observe(document.documentElement, {
