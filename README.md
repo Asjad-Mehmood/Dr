@@ -1,36 +1,88 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dr. Naima Asjad — Portfolio
 
-## Getting Started
+**A Journey from Medical Student to Doctor — Learning, Serving & Caring.**
 
-First, run the development server:
+A living portfolio that records Naima's medical journey year by year: MBBS
+at Central Park Medical College (2026–2030), then the house job,
+specialization and the rest of a medical career. It also records the Annual
+Free Medical Camp held every year.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Built with Next.js (App Router), TypeScript and Tailwind CSS.
+
+## Pages
+
+| Page | What it shows |
+| --- | --- |
+| `/` | Introduction, the four threads, the journey timeline, this year's camp, latest additions |
+| `/journey` | The full timeline, 2026–2030 and the chapters after graduation |
+| `/journey/2026` … `/journey/2030` | One page per year: subjects, achievements and that year's camp |
+| `/camps` | Every Annual Free Medical Camp with its details and photos |
+| `/portfolio` | All achievements grouped by category |
+| `/about` | The idea behind the portfolio |
+
+## Updating the site
+
+All content lives in `src/content/`. You never need to touch the page code
+to add something.
+
+### Add an achievement — `src/content/portfolio.ts`
+
+Add an object to the `entries` list:
+
+```ts
+{
+  title: "Best Poster Award, Annual Research Day",
+  category: "research",       // academics, research, societies, patient-welfare,
+                              // community, events or awards
+  year: 2027,                 // decides which journey year it appears in
+  date: "March 2027",         // optional
+  role: "Presenter",          // optional
+  description: "Poster on …", // optional
+  link: "https://…",          // optional
+},
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+It appears on the Portfolio page under its category, on that year's
+journey page, and on the home page if it is among the latest.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Record a medical camp — `src/content/camps.ts`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fill in that year's camp. A camp counts as held once its `date` is set.
 
-## Learn More
+```ts
+{
+  year: 2026,
+  edition: 1,
+  date: "14 December 2026",
+  location: "…",
+  patientsServed: 250,
+  volunteers: 30,
+  services: ["General check-up", "Blood pressure & sugar screening", "Free medicines"],
+  partners: ["…"],
+  story: "A few lines about the day.",
+  photos: [{ src: "/camps/2026/registration.jpg", alt: "Patients at registration" }],
+},
+```
 
-To learn more about Next.js, take a look at the following resources:
+Put the photos in `public/camps/2026/`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Move to the next year — `src/content/profile.ts`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Change `currentYear` (e.g. to `2027`). The site then marks earlier years as
+completed and the new year as in progress. Contact details (email,
+LinkedIn, Instagram) are also set here; empty ones are hidden.
 
-## Deploy on Vercel
+### After graduation — `src/content/journey.ts`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Year themes, summaries and subjects are edited here. When the house job
+starts, add it as a new year in `journey` (e.g. `{ year: 2031, stage: "House
+Job", … }`) and a camp for 2031 in `camps.ts`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Development
+
+```bash
+npm install
+npm run dev     # http://localhost:3000
+npm run lint
+npm run build
+```
