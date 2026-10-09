@@ -1,33 +1,52 @@
 @import "tailwindcss";
 
-/* Cream background, deep navy ink, soft grey and a teal-blue accent. */
+/* Clean medical palette: white and soft blue, deep navy ink, medical blue. */
 :root {
-  --background: #faf7f1;
+  --background: #f7faff;
   --surface: #ffffff;
-  --ink: #16243d;
-  --muted: #5e6a7c;
-  --line: #e5dfd4;
-  --primary: #0d6d78;
+  --ink: #0f1f3d;
+  --muted: #5a6a85;
+  --line: #e1e9f6;
+  --primary: #1f5fd6;
   --primary-ink: #ffffff;
-  --primary-soft: #e3eff0;
-  --accent: #a85468;
-  --accent-soft: #f6e6ea;
+  --primary-soft: #e8f0fe;
+  --accent: #0e8ba6;
+  --accent-soft: #e2f4f8;
+  --shadow: 0 1px 2px rgb(15 31 61 / 0.04), 0 8px 24px rgb(31 95 214 / 0.07);
+  /* Vector artwork */
+  --art-1: #dce8fd;
+  --art-2: #a9c3f2;
+  --art-light: #f4f8ff;
+  --art-mark-1: #6aa2ff;
+  --art-mark-2: #1f5fd6;
+  --art-dot: #c6d7f5;
+  --art-ring: #e3ecfb;
+  --art-glow: #e6efff;
   color-scheme: light;
 }
 
-/* Cream is the default; the header toggle switches to dark and the choice is
+/* Light is the default; the header toggle switches to dark and the choice is
    remembered (see ThemeToggle and the script in the site layout). */
 :root[data-theme="dark"] {
-  --background: #0c1322;
-  --surface: #121b2e;
-  --ink: #e8ecf3;
-  --muted: #98a4b8;
-  --line: #222d44;
-  --primary: #5ec3cd;
-  --primary-ink: #08202a;
-  --primary-soft: #14283a;
-  --accent: #e39aab;
-  --accent-soft: #35202b;
+  --background: #0a1222;
+  --surface: #101a2e;
+  --ink: #e7edf8;
+  --muted: #94a3bd;
+  --line: #1e2a43;
+  --primary: #6fa3ff;
+  --primary-ink: #071226;
+  --primary-soft: #142446;
+  --accent: #4cc3dc;
+  --accent-soft: #10303a;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.25);
+  --art-1: #1b2f55;
+  --art-2: #2e4f8f;
+  --art-light: #3a5a96;
+  --art-mark-1: #8bb8ff;
+  --art-mark-2: #3f7be8;
+  --art-dot: #233a63;
+  --art-ring: #15233d;
+  --art-glow: #12224a;
   color-scheme: dark;
 }
 
@@ -43,7 +62,8 @@
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-geist-sans);
-  --font-display: var(--font-fraunces);
+  --font-display: var(--font-serif);
+  --shadow-soft: var(--shadow);
 }
 
 body {
@@ -136,6 +156,21 @@ body {
   }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .float-slow {
+    animation: float-slow 9s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes float-slow {
+  from {
+    transform: translateY(0) rotate(0deg);
+  }
+  to {
+    transform: translateY(-14px) rotate(-1.5deg);
+  }
+}
+
 @keyframes reveal {
   from {
     opacity: 0;
@@ -155,6 +190,7 @@ body {
 
 @media print {
   .reveal,
+  .float-slow,
   .pulse-line {
     animation: none !important;
   }

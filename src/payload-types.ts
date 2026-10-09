@@ -1339,7 +1339,10 @@ export interface SiteSetting {
    */
   postNominals?: string | null;
   role?: string | null;
-  initials?: string | null;
+  /**
+   * Shown after the role, e.g. MBBS Student | Aspiring Physician
+   */
+  roleSubtitle?: string | null;
   institution?: string | null;
   institutionShort?: string | null;
   city?: string | null;
@@ -1405,6 +1408,8 @@ export interface HomePage {
     | {
         title: string;
         href?: string | null;
+        icon?:
+          ('graduation' | 'book' | 'community' | 'research' | 'stethoscope' | 'heart' | 'award' | 'calendar') | null;
         text?: string | null;
         id?: string | null;
       }[]
@@ -1564,7 +1569,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   name?: T;
   postNominals?: T;
   role?: T;
-  initials?: T;
+  roleSubtitle?: T;
   institution?: T;
   institutionShort?: T;
   city?: T;
@@ -1622,6 +1627,7 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         title?: T;
         href?: T;
+        icon?: T;
         text?: T;
         id?: T;
       };

@@ -1,16 +1,19 @@
+import { MapPin, Stethoscope } from "lucide-react";
 import Link from "next/link";
 import { CountUp } from "@/components/count-up";
+import { IconBadge, iconFor } from "@/components/icons";
 import { JourneyTimeline } from "@/components/journey-timeline";
 import { CMSImage } from "@/components/media";
 import { RecordList } from "@/components/record-list";
 import {
   ArrowLink,
+  ButtonLink,
   Container,
-  Eyebrow,
+  Divider,
   Facts,
-  PulseLine,
   SectionHeading,
 } from "@/components/ui";
+import { HeaderBackdrop, SoftCross } from "@/components/vectors";
 import {
   asMedia,
   campTitle,
@@ -102,67 +105,84 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="relative overflow-hidden">
-        <Container className="grid items-center gap-12 pt-16 pb-24 sm:pt-24 lg:grid-cols-[1.5fr_1fr]">
-          <div>
-            {settings.tagline && <Eyebrow>{settings.tagline}</Eyebrow>}
-            <h1 className="mt-6 font-display text-5xl font-semibold tracking-tight sm:text-7xl">
-              {displayName(settings)}
-            </h1>
-            <p className="mt-4 text-lg">
-              <span className="font-medium">{settings.role}</span>
-              {settings.institution && (
-                <span className="text-muted">
-                  {" "}
-                  · {settings.institution}
-                  {settings.city ? `, ${settings.city}` : ""}
-                </span>
-              )}
-            </p>
-            {home.statement && (
-              <p className="mt-8 max-w-xl font-display text-2xl text-balance text-muted italic sm:text-3xl">
-                {home.statement}
-              </p>
-            )}
-            {home.buttons && home.buttons.length > 0 && (
-              <div className="mt-10 flex flex-wrap gap-3">
-                {home.buttons.map((button, index) => (
-                  <Link
-                    key={button.id ?? index}
-                    href={button.href}
-                    className={
-                      index === 0
-                        ? "rounded-full bg-ink px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-85"
-                        : "rounded-full border border-line bg-surface px-6 py-3 text-sm font-medium transition-colors hover:border-primary"
-                    }
-                  >
-                    {button.label}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-          {portrait && (
+      <section className="relative isolate overflow-hidden border-b border-line/70">
+        <HeaderBackdrop large />
+        <Container className="flex flex-col items-center pt-14 pb-36 text-center sm:pt-20 sm:pb-44">
+          {portrait ? (
             <CMSImage
               media={portrait}
-              size="large"
+              size="card"
               priority
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              className="aspect-[4/5] w-full rounded-[2rem] object-cover"
+              sizes="160px"
+              className="size-32 rounded-full object-cover ring-4 ring-surface shadow-soft sm:size-36"
             />
+          ) : (
+            <span className="grid size-16 place-items-center rounded-full bg-primary-soft text-primary shadow-soft ring-8 ring-primary-soft/50">
+              <Stethoscope
+                aria-hidden="true"
+                className="size-8"
+                strokeWidth={1.6}
+              />
+            </span>
+          )}
+          {settings.tagline && (
+            <p className="mt-8 text-xs font-semibold tracking-[0.22em] text-primary uppercase">
+              {settings.tagline}
+            </p>
+          )}
+          <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight text-balance sm:text-7xl lg:text-[5.5rem] lg:leading-[1.05]">
+            {displayName(settings)}
+          </h1>
+          <p className="mt-5 text-lg font-medium text-primary sm:text-2xl">
+            {settings.role}
+            {settings.roleSubtitle && (
+              <>
+                <span aria-hidden="true" className="mx-3 text-primary/40">
+                  |
+                </span>
+                {settings.roleSubtitle}
+              </>
+            )}
+          </p>
+          <Divider center />
+          {home.statement && (
+            <p className="mt-6 max-w-2xl text-lg text-muted text-pretty">
+              {home.statement}
+            </p>
+          )}
+          {settings.institution && (
+            <p className="mt-4 inline-flex items-center gap-1.5 text-sm text-muted">
+              <MapPin aria-hidden="true" className="size-4 text-primary" />
+              {settings.institution}
+              {settings.city ? `, ${settings.city}` : ""}
+            </p>
+          )}
+          {home.buttons && home.buttons.length > 0 && (
+            <div className="mt-10 flex flex-wrap justify-center gap-3">
+              {home.buttons.map((button, index) => (
+                <ButtonLink
+                  key={button.id ?? index}
+                  href={button.href}
+                  variant={index === 0 ? "primary" : "soft"}
+                >
+                  {button.label}
+                </ButtonLink>
+              ))}
+            </div>
           )}
         </Container>
-        <PulseLine className="pointer-events-none absolute inset-x-0 bottom-4 h-14 w-full text-primary/35" />
       </section>
 
       {home.highlights && home.highlights.length > 0 && (
-        <section className="border-y border-line bg-surface">
+        <section className="relative z-10 -mt-24 sm:-mt-28">
           <Container>
-            <ul className="grid divide-line sm:grid-cols-2 sm:divide-x lg:grid-cols-4">
+            <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {home.highlights.map((item, index) => {
+                const Icon = iconFor(item.icon, index);
                 const inner = (
                   <>
-                    <p className="font-display text-xl font-semibold group-hover:text-primary">
+                    <IconBadge icon={Icon} />
+                    <p className="mt-5 font-display text-xl font-semibold group-hover:text-primary">
                       {item.title}
                     </p>
                     {item.text && (
@@ -170,17 +190,19 @@ export default async function HomePage() {
                     )}
                   </>
                 );
+                const card =
+                  "group block h-full rounded-2xl border border-line bg-surface p-6 shadow-soft transition-all duration-200";
                 return (
-                  <li
-                    key={item.id ?? index}
-                    className="border-b border-line py-8 sm:px-6 sm:first:pl-0 lg:border-b-0"
-                  >
+                  <li key={item.id ?? index} className="reveal">
                     {item.href ? (
-                      <Link href={item.href} className="group block">
+                      <Link
+                        href={item.href}
+                        className={`${card} hover:-translate-y-1 hover:border-primary/40`}
+                      >
                         {inner}
                       </Link>
                     ) : (
-                      inner
+                      <div className={card}>{inner}</div>
                     )}
                   </li>
                 );
@@ -191,7 +213,7 @@ export default async function HomePage() {
       )}
 
       {home.showTimeline && stages.length > 0 && (
-        <section className="py-24">
+        <section className="py-24 sm:py-28">
           <Container className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
             <div className="lg:sticky lg:top-28 lg:self-start">
               <SectionHeading
@@ -218,13 +240,18 @@ export default async function HomePage() {
               eyebrow="Impact"
               title={home.impactTitle || "Impact"}
             />
-            <dl className="mt-12 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-4">
+            <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
               {impactShown.map((item) => (
-                <div key={item.label} className="reveal">
-                  <dd className="font-display text-5xl font-semibold text-primary tabular-nums">
+                <div
+                  key={item.label}
+                  className="reveal flex flex-col rounded-2xl border border-line bg-background p-5 sm:p-6"
+                >
+                  <dt className="order-2 mt-1 text-sm text-muted">
+                    {item.label}
+                  </dt>
+                  <dd className="order-1 font-display text-4xl font-semibold text-primary tabular-nums sm:text-5xl">
                     <CountUp value={item.value} />
                   </dd>
-                  <dt className="mt-2 text-sm text-muted">{item.label}</dt>
                 </div>
               ))}
             </dl>
@@ -242,9 +269,11 @@ export default async function HomePage() {
             >
               {camp.summary || texts.camps?.intro}
             </SectionHeading>
-            <div className="reveal mt-10 rounded-3xl border border-line bg-surface p-6 sm:p-10">
+            <div className="reveal relative mt-10 overflow-hidden rounded-3xl border border-line bg-surface p-6 shadow-soft sm:p-10">
+              <SoftCross className="pointer-events-none absolute -right-6 -bottom-6 size-40 opacity-50" />
               <div className="flex flex-wrap items-baseline justify-between gap-4">
-                <p className="font-display text-2xl font-semibold">
+                <p className="flex items-center gap-3 font-display text-2xl font-semibold">
+                  <IconBadge icon={Stethoscope} />
                   {campTitle(camp, texts)}
                 </p>
                 <span className="text-sm text-muted">

@@ -43,7 +43,16 @@ export const SiteSettings: GlobalConfig = {
               type: "row",
               fields: [
                 { name: "role", type: "text", defaultValue: "MBBS Student" },
-                { name: "initials", type: "text", defaultValue: "NA" },
+                {
+                  name: "roleSubtitle",
+                  label: "Second title",
+                  type: "text",
+                  defaultValue: "Aspiring Physician",
+                  admin: {
+                    description:
+                      "Shown after the role, e.g. MBBS Student | Aspiring Physician",
+                  },
+                },
               ],
             },
             {

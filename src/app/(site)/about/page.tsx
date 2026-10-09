@@ -1,6 +1,13 @@
 import type { Metadata } from "next";
 import { CMSImage } from "@/components/media";
-import { Container, Eyebrow, Section, Tag } from "@/components/ui";
+import {
+  Container,
+  Divider,
+  Eyebrow,
+  HeaderShell,
+  Section,
+  Tag,
+} from "@/components/ui";
 import { asMedia, displayName, getAbout, getSettings } from "@/lib/cms";
 
 export const metadata: Metadata = { title: "About" };
@@ -11,14 +18,15 @@ export default async function AboutPage() {
 
   return (
     <>
-      <Container className="grid gap-12 pt-14 pb-16 sm:pt-20 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+      <HeaderShell className="grid gap-12 lg:grid-cols-[1.4fr_1fr] lg:items-end">
         <div>
           <Eyebrow>About</Eyebrow>
           <h1 className="mt-3 font-display text-4xl font-semibold tracking-tight sm:text-6xl">
             {displayName(settings)}
           </h1>
-          <p className="mt-3 text-lg">
-            <span className="font-medium">{settings.role}</span>
+          <Divider />
+          <p className="mt-5 text-lg">
+            <span className="font-medium text-primary">{settings.role}</span>
             <span className="text-muted">
               {" "}
               · {settings.institution}
@@ -41,10 +49,10 @@ export default async function AboutPage() {
             media={portrait}
             size="large"
             sizes="(min-width: 1024px) 35vw, 100vw"
-            className="aspect-[4/5] w-full rounded-[2rem] object-cover"
+            className="aspect-[4/5] w-full rounded-[2rem] object-cover shadow-soft"
           />
         )}
-      </Container>
+      </HeaderShell>
 
       <Container className="grid gap-16 lg:grid-cols-2">
         {about.education && about.education.length > 0 && (

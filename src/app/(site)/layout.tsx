@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Geist } from "next/font/google";
+import { Geist, Source_Serif_4 } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { themeScript } from "@/components/theme";
@@ -14,8 +14,8 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-const fraunces = Fraunces({
-  variable: "--font-fraunces",
+const serif = Source_Serif_4({
+  variable: "--font-serif",
   subsets: ["latin"],
 });
 
@@ -41,7 +41,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${serif.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
@@ -62,7 +62,6 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
         </a>
         <SiteHeader
           name={displayName(settings)}
-          initials={settings.initials || "NA"}
           nav={settings.navigation ?? []}
         />
         <main id="main" className="flex-1">
