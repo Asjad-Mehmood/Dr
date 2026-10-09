@@ -9,6 +9,7 @@ import {
   Container,
   EmptyNote,
   Eyebrow,
+  HeaderShell,
   Section,
   StatusBadge,
   Tag,
@@ -95,7 +96,7 @@ export default async function JourneyStagePage({
 
   return (
     <>
-      <Container className="pt-14 pb-12 sm:pt-20">
+      <HeaderShell>
         <BackLink href="/journey">The journey</BackLink>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Eyebrow>{stage.title}</Eyebrow>
@@ -115,7 +116,7 @@ export default async function JourneyStagePage({
             {stage.summary}
           </p>
         )}
-      </Container>
+      </HeaderShell>
 
       {cover && (
         <Container className="mb-14">

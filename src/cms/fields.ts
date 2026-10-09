@@ -171,3 +171,19 @@ export const categoryField = (section: string, required = false): Field => ({
     description: "Manage the list under Settings → Categories.",
   },
 });
+
+// "Preview" button in the admin, opening the record's page on the website.
+// Only published records are visible there.
+export function previewAt(
+  path: (doc: Record<string, unknown>) => string | null,
+) {
+  return (doc: Record<string, unknown>) => {
+    const target = path(doc);
+    return target
+      ? `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}${target}`
+      : null;
+  };
+}
+
+export const bySlug = (base: string) =>
+  previewAt((doc) => (doc.slug ? `${base}/${doc.slug}` : null));

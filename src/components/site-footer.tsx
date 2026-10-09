@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { displayName } from "@/lib/cms";
 import type { SiteSetting } from "@/payload-types";
+import { CrossMark, DotGrid } from "./vectors";
 
 export function SiteFooter({ settings }: { settings: SiteSetting }) {
   const explore = [
@@ -20,10 +21,16 @@ export function SiteFooter({ settings }: { settings: SiteSetting }) {
   ].filter((item): item is { href: string; label: string } => Boolean(item));
 
   return (
-    <footer className="mt-28 border-t border-line">
+    <footer className="relative mt-28 overflow-hidden border-t border-line bg-surface">
+      <DotGrid
+        className="pointer-events-none absolute right-6 bottom-6 hidden w-28 opacity-70 md:block"
+        rows={3}
+        cols={7}
+      />
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.4fr_2fr_1fr]">
         <div>
-          <p className="font-display text-xl font-semibold">
+          <p className="flex items-center gap-2.5 font-display text-xl font-semibold">
+            <CrossMark className="size-7" />
             {displayName(settings)}
           </p>
           {settings.role && (

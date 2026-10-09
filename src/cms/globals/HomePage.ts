@@ -4,7 +4,10 @@ import { loggedIn } from "../access";
 export const HomePage: GlobalConfig = {
   slug: "home-page",
   label: "Home page",
-  admin: { group: "Pages" },
+  admin: {
+    group: "Pages",
+    preview: () => `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}/`,
+  },
   access: { read: () => true, update: loggedIn },
   fields: [
     {
@@ -60,21 +63,25 @@ export const HomePage: GlobalConfig = {
               defaultValue: [
                 {
                   title: "MBBS Journey",
+                  icon: "graduation",
                   text: "2026 → 2030",
                   href: "/journey",
                 },
                 {
                   title: "Academic Excellence",
+                  icon: "book",
                   text: "Education • Skills • Achievements",
                   href: "/academic",
                 },
                 {
                   title: "Community Service",
+                  icon: "community",
                   text: "Medical Camps • Health Awareness • Volunteering",
                   href: "/community",
                 },
                 {
                   title: "Research & Learning",
+                  icon: "research",
                   text: "Research • Seminars • Workshops",
                   href: "/research",
                 },
@@ -85,6 +92,20 @@ export const HomePage: GlobalConfig = {
                   fields: [
                     { name: "title", type: "text", required: true },
                     { name: "href", label: "Link", type: "text" },
+                    {
+                      name: "icon",
+                      type: "select",
+                      options: [
+                        { label: "Graduation cap", value: "graduation" },
+                        { label: "Book", value: "book" },
+                        { label: "Helping hands", value: "community" },
+                        { label: "Microscope", value: "research" },
+                        { label: "Stethoscope", value: "stethoscope" },
+                        { label: "Heart pulse", value: "heart" },
+                        { label: "Award", value: "award" },
+                        { label: "Calendar", value: "calendar" },
+                      ],
+                    },
                   ],
                 },
                 { name: "text", type: "text" },

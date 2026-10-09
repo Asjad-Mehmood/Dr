@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 import { editorOnly, publishedOrLoggedIn } from "../access";
 import {
   dateField,
+  previewAt,
   numbersVerifiedField,
   pdfField,
   photosField,
@@ -16,6 +17,9 @@ export const MedicalCamps: CollectionConfig = {
     useAsTitle: "year",
     group: "Activities",
     defaultColumns: ["year", "edition", "campStatus", "date", "_status"],
+    preview: previewAt((doc) =>
+      doc.year ? `/medical-camps/${doc.year}` : null,
+    ),
     description:
       "The Annual Free Medical Camp — one record per year. Impact totals on the website are calculated from these records.",
   },

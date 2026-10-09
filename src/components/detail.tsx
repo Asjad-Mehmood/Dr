@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { BackLink, Container, Eyebrow } from "./ui";
+import { BackLink, Container, Divider, Eyebrow, HeaderShell } from "./ui";
 
 export function DetailHeader({
   back,
@@ -16,7 +16,7 @@ export function DetailHeader({
 }) {
   const metaLine = meta?.filter(Boolean).join(" · ");
   return (
-    <Container className="pt-14 pb-12 sm:pt-20">
+    <HeaderShell>
       <BackLink href={back.href}>{back.label}</BackLink>
       {eyebrow && (
         <div className="mt-8">
@@ -26,9 +26,10 @@ export function DetailHeader({
       <h1 className="mt-3 max-w-4xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
         {title}
       </h1>
+      <Divider />
       {metaLine && <p className="mt-5 text-muted">{metaLine}</p>}
       {children}
-    </Container>
+    </HeaderShell>
   );
 }
 

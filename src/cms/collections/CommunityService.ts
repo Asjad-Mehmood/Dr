@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { editorOnly, publishedOrLoggedIn } from "../access";
 import {
+  bySlug,
   dateField,
   numbersVerifiedField,
   pdfField,
@@ -27,7 +28,9 @@ export const CommunityService: CollectionConfig = {
   admin: {
     useAsTitle: "title",
     group: "Activities",
-    defaultColumns: ["title", "type", "date", "_status"],
+    defaultColumns: ["title", "type", "date", "location", "_status"],
+    listSearchableFields: ["title", "location", "role", "organizer"],
+    preview: bySlug("/community"),
     description:
       "Blood donation, health awareness, outreach, patient welfare and volunteer work. (The Annual Free Medical Camp has its own section.)",
   },
@@ -36,54 +39,94 @@ export const CommunityService: CollectionConfig = {
   defaultSort: "-date",
   hooks: { beforeChange: [setYearFromDate] },
   fields: [
-    { name: "title", type: "text", required: true },
     {
-      type: "row",
-      fields: [
+      name: "title",
+      type: "text",
+      required: true,
+      admin: { placeholder: "e.g. Blood Donation Drive at CPMC" },
+    },
+    {
+      type: "tabs",
+      tabs: [
         {
-          name: "type",
-          type: "select",
-          required: true,
-          options: communityTypes,
+          label: "Details",
+          fields: [
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "type",
+                  type: "select",
+                  required: true,
+                  options: communityTypes,
+                },
+                dateField(),
+              ],
+            },
+            {
+              type: "row",
+              fields: [
+                { name: "location", type: "text" },
+                {
+                  name: "role",
+                  label: "Naima's role",
+                  type: "text",
+                  admin: { placeholder: "e.g. Volunteer, Organiser" },
+                },
+                { name: "organizer", label: "Organising team", type: "text" },
+              ],
+            },
+            {
+              name: "services",
+              type: "array",
+              labels: { singular: "Service", plural: "Services" },
+              fields: [{ name: "name", type: "text", required: true }],
+            },
+            {
+              name: "supporters",
+              label: "Sponsors / supporters",
+              type: "text",
+            },
+            {
+              name: "summary",
+              type: "textarea",
+              admin: { description: "One or two sentences shown in lists." },
+            },
+            { name: "description", type: "richText" },
+          ],
         },
-        dateField(),
-      ],
-    },
-    {
-      type: "row",
-      fields: [
-        { name: "location", type: "text" },
-        { name: "role", label: "Naima's role", type: "text" },
-        { name: "organizer", label: "Organising team", type: "text" },
-      ],
-    },
-    {
-      type: "row",
-      fields: [
         {
-          name: "peopleServed",
-          label: "People served",
-          type: "number",
-          min: 0,
+          label: "Impact",
+          description: "Numbers appear on the website only when verified.",
+          fields: [
+            {
+              type: "row",
+              fields: [
+                {
+                  name: "peopleServed",
+                  label: "People served",
+                  type: "number",
+                  min: 0,
+                },
+                { name: "doctors", type: "number", min: 0 },
+                { name: "volunteers", type: "number", min: 0 },
+              ],
+            },
+            numbersVerifiedField,
+          ],
         },
-        { name: "doctors", type: "number", min: 0 },
-        { name: "volunteers", type: "number", min: 0 },
+        {
+          label: "Photos & documents",
+          fields: [
+            privacyGroup,
+            photosField(),
+            ...videoFields,
+            pdfField("certificate", "Certificate"),
+            pdfField("report", "Report"),
+          ],
+        },
       ],
     },
-    numbersVerifiedField,
-    {
-      name: "services",
-      type: "array",
-      fields: [{ name: "name", type: "text", required: true }],
-    },
-    { name: "supporters", label: "Sponsors / supporters", type: "text" },
-    { name: "summary", type: "textarea" },
-    { name: "description", type: "richText" },
-    photosField(),
-    ...videoFields,
-    pdfField("certificate", "Certificate"),
-    pdfField("report", "Report"),
-    privacyGroup,
     slugField(),
     yearField,
   ],

@@ -4,7 +4,10 @@ import { loggedIn } from "../access";
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   label: "Site settings",
-  admin: { group: "Settings" },
+  admin: {
+    group: "Settings",
+    preview: () => `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}/`,
+  },
   access: { read: () => true, update: loggedIn },
   fields: [
     {
@@ -43,7 +46,16 @@ export const SiteSettings: GlobalConfig = {
               type: "row",
               fields: [
                 { name: "role", type: "text", defaultValue: "MBBS Student" },
-                { name: "initials", type: "text", defaultValue: "NA" },
+                {
+                  name: "roleSubtitle",
+                  label: "Second title",
+                  type: "text",
+                  defaultValue: "Aspiring Physician",
+                  admin: {
+                    description:
+                      "Shown after the role, e.g. MBBS Student | Aspiring Physician",
+                  },
+                },
               ],
             },
             {

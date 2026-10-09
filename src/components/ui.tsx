@@ -1,6 +1,8 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
 import type { StageStatus } from "@/lib/cms";
+import { HeaderBackdrop } from "./vectors";
 
 export function Container({
   children,
@@ -49,6 +51,15 @@ export function SectionHeading({
   );
 }
 
+export function Divider({ center = false }: { center?: boolean }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`mt-6 block h-0.5 w-14 rounded-full bg-primary/70 ${center ? "mx-auto" : ""}`}
+    />
+  );
+}
+
 export function PageHeader({
   text,
   children,
@@ -61,18 +72,67 @@ export function PageHeader({
   children?: ReactNode;
 }) {
   return (
-    <Container className="pt-14 pb-12 sm:pt-20 sm:pb-16">
-      {text?.eyebrow && <Eyebrow>{text.eyebrow}</Eyebrow>}
-      <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
-        {text?.title}
-      </h1>
-      {text?.intro && (
-        <p className="mt-5 max-w-2xl text-lg text-muted text-pretty">
-          {text.intro}
-        </p>
-      )}
+    <section className="relative isolate mb-6 border-b border-line/70">
+      <HeaderBackdrop />
+      <Container className="pt-16 pb-14 sm:pt-24 sm:pb-20">
+        {text?.eyebrow && <Eyebrow>{text.eyebrow}</Eyebrow>}
+        <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
+          {text?.title}
+        </h1>
+        <Divider />
+        {text?.intro && (
+          <p className="mt-6 max-w-2xl text-lg text-muted text-pretty">
+            {text.intro}
+          </p>
+        )}
+        {children}
+      </Container>
+    </section>
+  );
+}
+
+// The decorated band at the top of every inner page.
+export function HeaderShell({
+  children,
+  className = "",
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <section className="relative isolate mb-12 border-b border-line/70">
+      <HeaderBackdrop />
+      <Container className={`pt-14 pb-12 sm:pt-20 sm:pb-16 ${className}`}>
+        {children}
+      </Container>
+    </section>
+  );
+}
+
+export function ButtonLink({
+  href,
+  children,
+  variant = "primary",
+}: {
+  href: string;
+  children: ReactNode;
+  variant?: "primary" | "soft";
+}) {
+  return (
+    <Link
+      href={href}
+      className={`group inline-flex items-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-all duration-200 ${
+        variant === "primary"
+          ? "bg-primary text-primary-ink shadow-[0_8px_20px_-6px] shadow-primary/50 hover:-translate-y-0.5 hover:shadow-[0_12px_24px_-6px] hover:shadow-primary/60"
+          : "bg-primary-soft text-primary ring-1 ring-primary/15 hover:bg-primary hover:text-primary-ink"
+      }`}
+    >
       {children}
-    </Container>
+      <ArrowRight
+        aria-hidden="true"
+        className="size-4 transition-transform group-hover:translate-x-0.5"
+      />
+    </Link>
   );
 }
 

@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CampDetail, campLabel } from "@/components/camp-parts";
-import { BackLink, Container, Eyebrow } from "@/components/ui";
+import {
+  BackLink,
+  Container,
+  Divider,
+  Eyebrow,
+  HeaderShell,
+} from "@/components/ui";
 import { campTitle, getPageTexts, list, publishedCamps } from "@/lib/cms";
 
 async function getCamp(year: string) {
@@ -43,7 +49,7 @@ export default async function CampPage({
 
   return (
     <>
-      <Container className="pt-14 pb-12 sm:pt-20">
+      <HeaderShell>
         <BackLink href="/medical-camps">All camps</BackLink>
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <Eyebrow>{campLabel(camp)}</Eyebrow>
@@ -54,7 +60,8 @@ export default async function CampPage({
         <h1 className="mt-3 max-w-4xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
           {campTitle(camp, texts)}
         </h1>
-      </Container>
+        <Divider />
+      </HeaderShell>
       <Container>
         <CampDetail camp={camp} texts={texts} />
         {camp.campStatus !== "held" && (

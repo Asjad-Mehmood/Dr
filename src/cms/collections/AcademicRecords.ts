@@ -17,7 +17,12 @@ export const AcademicRecords: CollectionConfig = {
   defaultSort: "-date",
   hooks: { beforeChange: [setYearFromDate] },
   fields: [
-    { name: "title", type: "text", required: true },
+    {
+      name: "title",
+      type: "text",
+      required: true,
+      admin: { placeholder: "e.g. First Professional Examination" },
+    },
     {
       type: "row",
       fields: [

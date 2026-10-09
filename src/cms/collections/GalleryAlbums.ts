@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { editorOnly, publishedOrLoggedIn } from "../access";
 import {
+  bySlug,
   categoryField,
   dateField,
   photosField,
@@ -16,6 +17,9 @@ export const GalleryAlbums: CollectionConfig = {
     useAsTitle: "title",
     group: "Media & Writing",
     defaultColumns: ["title", "category", "date", "_status"],
+    description:
+      "Photo albums. Upload many photos at once with the Photos field.",
+    preview: bySlug("/gallery"),
   },
   access: { read: publishedOrLoggedIn, ...editorOnly },
   versions: { drafts: true },

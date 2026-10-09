@@ -14,7 +14,10 @@ const list = (name: string, label: string, extra = false) => ({
 export const AboutPage: GlobalConfig = {
   slug: "about-page",
   label: "About page",
-  admin: { group: "Pages" },
+  admin: {
+    group: "Pages",
+    preview: () => `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}/about`,
+  },
   access: { read: () => true, update: loggedIn },
   fields: [
     {

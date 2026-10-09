@@ -321,7 +321,13 @@ export interface Event {
   endDate?: string | null;
   location?: string | null;
   role?: string | null;
+  /**
+   * One or two sentences shown in lists.
+   */
   summary?: string | null;
+  /**
+   * The full story, shown on the event's page.
+   */
   description?: {
     root: {
       type: string;
@@ -344,6 +350,9 @@ export interface Event {
    */
   videoUrl?: string | null;
   videoFile?: (number | null) | Media;
+  /**
+   * Certificates received at this event. Add the certificate under Achievements → Certificates first.
+   */
   certificates?: (number | Certificate)[] | null;
   /**
    * Manage the list under Settings → Categories.
@@ -363,6 +372,8 @@ export interface Event {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Upload a photo of the certificate (shown on the website) and the original PDF. Mark it private to keep it only in the admin.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "certificates".
  */
@@ -375,6 +386,9 @@ export interface Certificate {
   description?: string | null;
   preview?: (number | null) | Media;
   file?: (number | null) | Media;
+  /**
+   * The event where this certificate was received.
+   */
   event?: (number | null) | Event;
   /**
    * Manage the list under Settings → Categories.
@@ -520,13 +534,6 @@ export interface Community {
   location?: string | null;
   role?: string | null;
   organizer?: string | null;
-  peopleServed?: number | null;
-  doctors?: number | null;
-  volunteers?: number | null;
-  /**
-   * Only verified numbers are shown on the website and counted in totals.
-   */
-  numbersVerified?: boolean | null;
   services?:
     | {
         name: string;
@@ -534,6 +541,9 @@ export interface Community {
       }[]
     | null;
   supporters?: string | null;
+  /**
+   * One or two sentences shown in lists.
+   */
   summary?: string | null;
   description?: {
     root: {
@@ -550,6 +560,20 @@ export interface Community {
     };
     [k: string]: unknown;
   } | null;
+  peopleServed?: number | null;
+  doctors?: number | null;
+  volunteers?: number | null;
+  /**
+   * Only verified numbers are shown on the website and counted in totals.
+   */
+  numbersVerified?: boolean | null;
+  /**
+   * Never enter patient names, CNIC numbers, phone numbers, medical records or reports. Photos and videos are shown on the website only when both boxes are ticked.
+   */
+  privacy?: {
+    mediaConsent?: boolean | null;
+    publicDisplayApproved?: boolean | null;
+  };
   photos?: (number | Media)[] | null;
   /**
    * A YouTube or other video link.
@@ -558,13 +582,6 @@ export interface Community {
   videoFile?: (number | null) | Media;
   certificate?: (number | null) | Media;
   report?: (number | null) | Media;
-  /**
-   * Never enter patient names, CNIC numbers, phone numbers, medical records or reports. Photos and videos are shown on the website only when both boxes are ticked.
-   */
-  privacy?: {
-    mediaConsent?: boolean | null;
-    publicDisplayApproved?: boolean | null;
-  };
   /**
    * Used in the page address. Leave empty to create it from the title.
    */
@@ -578,6 +595,8 @@ export interface Community {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Awards, positions, distinctions and other milestones.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "achievements".
  */
@@ -634,10 +653,9 @@ export interface Research {
   role?: string | null;
   institution?: string | null;
   area?: string | null;
-  authors?: string | null;
-  venue?: string | null;
-  doi?: string | null;
-  link?: string | null;
+  /**
+   * One or two sentences shown in lists.
+   */
   summary?: string | null;
   abstract?: {
     root: {
@@ -654,6 +672,10 @@ export interface Research {
     };
     [k: string]: unknown;
   } | null;
+  authors?: string | null;
+  venue?: string | null;
+  doi?: string | null;
+  link?: string | null;
   pdf?: (number | null) | Media;
   /**
    * Used in the page address. Leave empty to create it from the title.
@@ -668,6 +690,8 @@ export interface Research {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Photo albums. Upload many photos at once with the Photos field.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "gallery".
  */
@@ -694,6 +718,8 @@ export interface Gallery {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Reflections and stories. A note that posts aren't medical advice is added to every post automatically.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "journal".
  */
@@ -1045,10 +1071,6 @@ export interface CommunitySelect<T extends boolean = true> {
   location?: T;
   role?: T;
   organizer?: T;
-  peopleServed?: T;
-  doctors?: T;
-  volunteers?: T;
-  numbersVerified?: T;
   services?:
     | T
     | {
@@ -1058,17 +1080,21 @@ export interface CommunitySelect<T extends boolean = true> {
   supporters?: T;
   summary?: T;
   description?: T;
-  photos?: T;
-  videoUrl?: T;
-  videoFile?: T;
-  certificate?: T;
-  report?: T;
+  peopleServed?: T;
+  doctors?: T;
+  volunteers?: T;
+  numbersVerified?: T;
   privacy?:
     | T
     | {
         mediaConsent?: T;
         publicDisplayApproved?: T;
       };
+  photos?: T;
+  videoUrl?: T;
+  videoFile?: T;
+  certificate?: T;
+  report?: T;
   slug?: T;
   year?: T;
   updatedAt?: T;
@@ -1128,12 +1154,12 @@ export interface ResearchSelect<T extends boolean = true> {
   role?: T;
   institution?: T;
   area?: T;
+  summary?: T;
+  abstract?: T;
   authors?: T;
   venue?: T;
   doi?: T;
   link?: T;
-  summary?: T;
-  abstract?: T;
   pdf?: T;
   slug?: T;
   year?: T;
@@ -1339,7 +1365,10 @@ export interface SiteSetting {
    */
   postNominals?: string | null;
   role?: string | null;
-  initials?: string | null;
+  /**
+   * Shown after the role, e.g. MBBS Student | Aspiring Physician
+   */
+  roleSubtitle?: string | null;
   institution?: string | null;
   institutionShort?: string | null;
   city?: string | null;
@@ -1405,6 +1434,8 @@ export interface HomePage {
     | {
         title: string;
         href?: string | null;
+        icon?:
+          ('graduation' | 'book' | 'community' | 'research' | 'stethoscope' | 'heart' | 'award' | 'calendar') | null;
         text?: string | null;
         id?: string | null;
       }[]
@@ -1564,7 +1595,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   name?: T;
   postNominals?: T;
   role?: T;
-  initials?: T;
+  roleSubtitle?: T;
   institution?: T;
   institutionShort?: T;
   city?: T;
@@ -1622,6 +1653,7 @@ export interface HomePageSelect<T extends boolean = true> {
     | {
         title?: T;
         href?: T;
+        icon?: T;
         text?: T;
         id?: T;
       };
