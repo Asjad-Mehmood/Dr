@@ -7,12 +7,18 @@ import { HeaderBackdrop } from "./vectors";
 export function Container({
   children,
   className = "",
+  stagger = false,
 }: {
   children: ReactNode;
   className?: string;
+  // Children animate in one after another when the page opens.
+  stagger?: boolean;
 }) {
   return (
-    <div className={`mx-auto w-full max-w-6xl px-4 sm:px-6 ${className}`}>
+    <div
+      className={`mx-auto w-full max-w-6xl px-4 sm:px-6 ${className}`}
+      data-stagger={stagger || undefined}
+    >
       {children}
     </div>
   );
@@ -74,7 +80,7 @@ export function PageHeader({
   return (
     <section className="relative isolate mb-6 border-b border-line/70">
       <HeaderBackdrop />
-      <Container className="pt-16 pb-14 sm:pt-24 sm:pb-20">
+      <Container stagger className="pt-16 pb-14 sm:pt-24 sm:pb-20">
         {text?.eyebrow && <Eyebrow>{text.eyebrow}</Eyebrow>}
         <h1 className="mt-3 max-w-3xl font-display text-4xl font-semibold tracking-tight text-balance sm:text-6xl">
           {text?.title}
@@ -102,7 +108,10 @@ export function HeaderShell({
   return (
     <section className="relative isolate mb-12 border-b border-line/70">
       <HeaderBackdrop />
-      <Container className={`pt-14 pb-12 sm:pt-20 sm:pb-16 ${className}`}>
+      <Container
+        stagger
+        className={`pt-14 pb-12 sm:pt-20 sm:pb-16 ${className}`}
+      >
         {children}
       </Container>
     </section>

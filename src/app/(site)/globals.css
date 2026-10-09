@@ -130,55 +130,21 @@ body {
   border-color: var(--line);
 }
 
-/* Subtle reveal as sections scroll into view, where the browser supports
-   scroll-driven animations. Content is always visible without it. */
+/* Page animations run with GSAP (see components/motion.tsx). Until it has
+   set its starting positions the content stays hidden, so nothing flashes;
+   a script in the layout adds .motion-pending only when motion is allowed. */
+.motion-pending [data-motion-root] {
+  visibility: hidden;
+}
+
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
-  }
-  @supports (animation-timeline: view()) {
-    .reveal {
-      animation: reveal linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 35%;
-    }
   }
   .pulse-line {
     stroke-dasharray: 4000;
     stroke-dashoffset: 4000;
     animation: draw-pulse 2.4s ease-out 0.3s forwards;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .float-slow {
-    animation: float-slow 9s ease-in-out infinite alternate;
-  }
-}
-
-@keyframes float-slow {
-  from {
-    transform: translateY(0) rotate(0deg);
-  }
-  to {
-    transform: translateY(-14px) rotate(-1.5deg);
-  }
-}
-
-@keyframes reveal {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
   }
 }
 
@@ -189,9 +155,10 @@ body {
 }
 
 @media print {
-  .reveal,
-  .float-slow,
-  .pulse-line {
-    animation: none !important;
+  [data-motion-root],
+  .reveal {
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

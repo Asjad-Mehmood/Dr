@@ -28,24 +28,31 @@ export function CrossMark({ className = "" }: { className?: string }) {
 
 export function SoftCross({ className = "" }: { className?: string }) {
   return (
-    <svg viewBox="0 0 200 200" className={className} aria-hidden="true">
+    <svg
+      viewBox="0 0 200 200"
+      className={className}
+      aria-hidden="true"
+      data-v="cross"
+    >
       <defs>
         <linearGradient id="soft-cross" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0" style={{ stopColor: "var(--art-1)" }} />
           <stop offset="1" style={{ stopColor: "var(--art-2)" }} />
         </linearGradient>
       </defs>
-      <path
-        d="M78 14h44a10 10 0 0 1 10 10v44h44a10 10 0 0 1 10 10v44a10 10 0 0 1-10 10h-44v44a10 10 0 0 1-10 10H78a10 10 0 0 1-10-10v-44H24a10 10 0 0 1-10-10V78a10 10 0 0 1 10-10h44V24a10 10 0 0 1 10-10Z"
-        fill="url(#soft-cross)"
-      />
-      <path
-        d="M80 22h36M22 80v36"
-        stroke="white"
-        strokeOpacity="0.5"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
+      <g data-float>
+        <path
+          d="M78 14h44a10 10 0 0 1 10 10v44h44a10 10 0 0 1 10 10v44a10 10 0 0 1-10 10h-44v44a10 10 0 0 1-10 10H78a10 10 0 0 1-10-10v-44H24a10 10 0 0 1-10-10V78a10 10 0 0 1 10-10h44V24a10 10 0 0 1 10-10Z"
+          fill="url(#soft-cross)"
+        />
+        <path
+          d="M80 22h36M22 80v36"
+          stroke="white"
+          strokeOpacity="0.5"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </g>
     </svg>
   );
 }
@@ -59,6 +66,7 @@ export function StethoscopeArt({ className = "" }: { className?: string }) {
       className={className}
       aria-hidden="true"
       fill="none"
+      data-v="steth"
     >
       <defs>
         <linearGradient id="steth-tube" x1="0" y1="0" x2="0.6" y2="1">
@@ -71,68 +79,78 @@ export function StethoscopeArt({ className = "" }: { className?: string }) {
           <stop offset="1" style={{ stopColor: "var(--art-2)" }} />
         </radialGradient>
       </defs>
-      {/* Ear tubes joining at the yoke */}
-      <path
-        d="M118 42C100 140 128 214 196 252"
-        stroke={tube}
-        strokeWidth="13"
-        strokeLinecap="round"
-      />
-      <path
-        d="M268 42C288 140 262 214 196 252"
-        stroke={tube}
-        strokeWidth="13"
-        strokeLinecap="round"
-      />
-      {/* Main tube down to the chest piece */}
-      <path
-        d="M196 252C196 330 132 360 138 432C144 504 236 524 290 470C312 448 320 426 322 404"
-        stroke={tube}
-        strokeWidth="15"
-        strokeLinecap="round"
-      />
-      {/* Glassy highlights */}
-      <path
-        d="M114 70C106 140 128 196 178 236"
-        stroke="white"
-        strokeOpacity="0.55"
-        strokeWidth="3.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M190 268C188 330 128 368 134 430"
-        stroke="white"
-        strokeOpacity="0.5"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
-      {/* Ear tips */}
-      <circle cx="118" cy="34" r="13" fill="url(#steth-bell)" />
-      <circle cx="268" cy="34" r="13" fill="url(#steth-bell)" />
-      {/* Chest piece */}
-      <circle cx="324" cy="362" r="52" fill="url(#steth-bell)" />
-      <circle
-        cx="324"
-        cy="362"
-        r="34"
-        stroke="white"
-        strokeOpacity="0.6"
-        strokeWidth="4"
-      />
-      <circle
-        cx="324"
-        cy="362"
-        r="16"
-        style={{ fill: "var(--art-light)" }}
-        opacity="0.8"
-      />
-      <path
-        d="M296 338a36 36 0 0 1 22-14"
-        stroke="white"
-        strokeOpacity="0.8"
-        strokeWidth="4"
-        strokeLinecap="round"
-      />
+      <g data-float>
+        {/* Ear tubes joining at the yoke */}
+        <path
+          data-draw
+          d="M118 42C100 140 128 214 196 252"
+          stroke={tube}
+          strokeWidth="13"
+          strokeLinecap="round"
+        />
+        <path
+          data-draw
+          d="M268 42C288 140 262 214 196 252"
+          stroke={tube}
+          strokeWidth="13"
+          strokeLinecap="round"
+        />
+        {/* Main tube down to the chest piece */}
+        <path
+          data-draw
+          d="M196 252C196 330 132 360 138 432C144 504 236 524 290 470C312 448 320 426 322 404"
+          stroke={tube}
+          strokeWidth="15"
+          strokeLinecap="round"
+        />
+        {/* Glassy highlights */}
+        <path
+          data-draw
+          d="M114 70C106 140 128 196 178 236"
+          stroke="white"
+          strokeOpacity="0.55"
+          strokeWidth="3.5"
+          strokeLinecap="round"
+        />
+        <path
+          data-draw
+          d="M190 268C188 330 128 368 134 430"
+          stroke="white"
+          strokeOpacity="0.5"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+        {/* Ear tips */}
+        <circle data-pop cx="118" cy="34" r="13" fill="url(#steth-bell)" />
+        <circle data-pop cx="268" cy="34" r="13" fill="url(#steth-bell)" />
+        {/* Chest piece */}
+        <circle data-pop cx="324" cy="362" r="52" fill="url(#steth-bell)" />
+        <circle
+          data-pop
+          cx="324"
+          cy="362"
+          r="34"
+          stroke="white"
+          strokeOpacity="0.6"
+          strokeWidth="4"
+        />
+        <circle
+          data-pop
+          cx="324"
+          cy="362"
+          r="16"
+          style={{ fill: "var(--art-light)" }}
+          opacity="0.8"
+        />
+        <path
+          data-draw
+          d="M296 338a36 36 0 0 1 22-14"
+          stroke="white"
+          strokeOpacity="0.8"
+          strokeWidth="4"
+          strokeLinecap="round"
+        />
+      </g>
     </svg>
   );
 }
@@ -152,6 +170,7 @@ export function DotGrid({
       viewBox={`0 0 ${cols * gap} ${rows * gap}`}
       className={className}
       aria-hidden="true"
+      data-v="dots"
     >
       {Array.from({ length: rows * cols }, (_, i) => (
         <circle
@@ -159,6 +178,7 @@ export function DotGrid({
           cx={(i % cols) * gap + gap / 2}
           cy={Math.floor(i / cols) * gap + gap / 2}
           r="2"
+          data-dot
           style={{ fill: "var(--art-dot)" }}
         />
       ))}
@@ -173,6 +193,7 @@ export function Rings({ className = "" }: { className?: string }) {
       className={className}
       aria-hidden="true"
       fill="none"
+      data-v="rings"
     >
       {[60, 110, 160, 210].map((r) => (
         <circle
@@ -180,6 +201,7 @@ export function Rings({ className = "" }: { className?: string }) {
           cx="200"
           cy="200"
           r={r}
+          data-ring
           style={{ stroke: "var(--art-ring)" }}
           strokeWidth="1.2"
         />
@@ -188,7 +210,6 @@ export function Rings({ className = "" }: { className?: string }) {
   );
 }
 
-// The background used behind page headers and the home hero.
 // The background used behind page headers and the home hero. The large
 // version frames centred hero text; the small one keeps clear of the
 // left-aligned page titles.
@@ -196,6 +217,7 @@ export function HeaderBackdrop({ large = false }: { large?: boolean }) {
   return (
     <div
       aria-hidden="true"
+      data-backdrop
       className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--art-glow),transparent_70%)]" />
@@ -203,7 +225,7 @@ export function HeaderBackdrop({ large = false }: { large?: boolean }) {
       {large ? (
         <>
           <SoftCross className="absolute top-[38%] left-4 hidden size-48 opacity-60 md:block" />
-          <StethoscopeArt className="float-slow absolute -top-10 -right-36 h-[24rem] opacity-30 sm:-right-16 sm:h-[34rem] sm:opacity-60 md:-right-6 md:opacity-80 lg:right-4 lg:h-[36rem]" />
+          <StethoscopeArt className="absolute -top-10 -right-36 h-[24rem] opacity-30 sm:-right-16 sm:h-[34rem] sm:opacity-60 md:-right-6 md:opacity-80 lg:right-4 lg:h-[36rem]" />
           <DotGrid className="absolute bottom-6 left-4 hidden w-32 opacity-80 sm:left-8 sm:block" />
           <DotGrid
             className="absolute right-6 bottom-6 hidden w-28 opacity-80 sm:block"
@@ -213,7 +235,7 @@ export function HeaderBackdrop({ large = false }: { large?: boolean }) {
         </>
       ) : (
         <>
-          <StethoscopeArt className="float-slow absolute -top-10 -right-24 hidden h-80 opacity-80 sm:block lg:right-0" />
+          <StethoscopeArt className="absolute -top-10 -right-24 hidden h-80 opacity-80 sm:block lg:right-0" />
           <SoftCross className="absolute right-56 bottom-8 hidden size-20 opacity-50 lg:block" />
           <DotGrid
             className="absolute right-6 bottom-6 hidden w-28 opacity-80 sm:block"

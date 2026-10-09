@@ -24,6 +24,7 @@ import { HomePage } from "./cms/globals/HomePage";
 import { PageTexts } from "./cms/globals/PageTexts";
 import { SiteSettings } from "./cms/globals/SiteSettings";
 import { seedIfEmpty } from "./cms/seed";
+import { blobToken } from "./lib/setup";
 import { migrations } from "./migrations";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -79,9 +80,9 @@ export default buildConfig({
   sharp,
   plugins: [
     vercelBlobStorage({
-      enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),
+      enabled: Boolean(blobToken()),
       collections: { media: true },
-      token: process.env.BLOB_READ_WRITE_TOKEN,
+      token: blobToken()?.token,
       clientUploads: true,
     }),
   ],

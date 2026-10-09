@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Source_Serif_4 } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { motionScript } from "@/components/motion-script";
 import { themeScript } from "@/components/theme";
 import { asMedia, displayName, getSettings } from "@/lib/cms";
 import "./globals.css";
@@ -52,6 +53,7 @@ export default async function SiteLayout({ children }: LayoutProps<"/">) {
             ),
           }}
         />
+        <script dangerouslySetInnerHTML={{ __html: motionScript }} />
       </head>
       <body className="flex min-h-full flex-col font-sans">
         <a

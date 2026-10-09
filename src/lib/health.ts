@@ -1,10 +1,16 @@
 import { access, mkdir } from "node:fs/promises";
 import path from "node:path";
 import config from "@payload-config";
-import { list as listBlobs } from "@vercel/blob";
+import {
+  del as deleteBlob,
+  list as listBlobs,
+  put as putBlob,
+} from "@vercel/blob";
 import { getPayload, type CollectionSlug, type GlobalSlug } from "payload";
 import {
   BLOB_STORE_MISSING,
+  BLOB_STORE_PRIVATE,
+  blobToken,
   explainDatabaseError,
   missingSettings,
   uploadsNeedBlobStore,
@@ -95,8 +101,10 @@ function configurationChecks(): Check[] {
     set(
       "File storage token",
       !uploadsNeedBlobStore(),
-      process.env.BLOB_READ_WRITE_TOKEN
-        ? "Set"
+      blobToken()
+        ? blobToken()!.name === "BLOB_READ_WRITE_TOKEN"
+          ? "Set"
+          : `Set (as ${blobToken()!.name})`
         : uploadsNeedBlobStore()
           ? "BLOB_READ_WRITE_TOKEN is not set — uploads won't work on Vercel."
           : "Not set — uploads are saved to the local disk.",
@@ -113,16 +121,40 @@ function configurationChecks(): Check[] {
 }
 
 async function storageCheck(): Promise<Check> {
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
-    return timed(
-      "Vercel Blob storage",
-      async () => {
-        const { blobs, hasMore } = await listBlobs({ limit: 100 });
-        return `Connected · ${hasMore ? "100+" : plural(blobs.length, "file")} stored`;
-      },
-      () =>
-        "The Blob token was rejected. Reconnect the Blob store in Vercel → Storage, then redeploy.",
-    );
+  const blob = blobToken();
+  if (blob) {
+    // A real round trip: upload a tiny public file, then delete it. This is
+    // exactly what the admin does, so it catches a private store too.
+    return timed("Vercel Blob storage", async () => {
+      const { token } = blob;
+      try {
+        const { url } = await putBlob("health-check.txt", "ok", {
+          access: "public",
+          token,
+          addRandomSuffix: false,
+          allowOverwrite: true,
+          contentType: "text/plain",
+        });
+        await deleteBlob(url, { token });
+      } catch (uploadError) {
+        // If the same token can still read the store, the token is fine and
+        // the store is refusing public files: it is a Private store.
+        const readable = await listBlobs({ limit: 1, token }).then(
+          () => true,
+          () => false,
+        );
+        const text = String(
+          uploadError instanceof Error ? uploadError.message : uploadError,
+        );
+        throw new Error(
+          readable || /private/i.test(text)
+            ? BLOB_STORE_PRIVATE
+            : "The Blob store rejected the token. Reconnect the Blob store in Vercel → Storage, then redeploy.",
+        );
+      }
+      const { blobs, hasMore } = await listBlobs({ limit: 100, token });
+      return `Uploads working · ${hasMore ? "100+" : plural(blobs.length, "file")} stored`;
+    });
   }
   if (uploadsNeedBlobStore()) {
     return { name: "File storage", ok: false, detail: BLOB_STORE_MISSING };
