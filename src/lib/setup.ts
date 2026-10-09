@@ -13,8 +13,32 @@ export function missingSettings() {
 // Vercel's servers can't keep uploaded files, so uploads there need a Blob
 // store; elsewhere they are saved to the local disk.
 export function uploadsNeedBlobStore() {
-  return Boolean(process.env.VERCEL) && !process.env.BLOB_READ_WRITE_TOKEN;
+  return Boolean(process.env.VERCEL) && !blobToken();
 }
+
+// The Vercel Blob token. Vercel names it BLOB_READ_WRITE_TOKEN unless a
+// custom prefix was chosen when connecting the store, so look for any
+// *_READ_WRITE_TOKEN that holds a Blob token.
+export function blobToken(): { token: string; name: string } | null {
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    return {
+      token: process.env.BLOB_READ_WRITE_TOKEN,
+      name: "BLOB_READ_WRITE_TOKEN",
+    };
+  }
+  for (const [name, value] of Object.entries(process.env)) {
+    if (
+      name.endsWith("_READ_WRITE_TOKEN") &&
+      value?.startsWith("vercel_blob_rw_")
+    ) {
+      return { token: value, name };
+    }
+  }
+  return null;
+}
+
+export const BLOB_STORE_PRIVATE =
+  "This Blob store is set to Private, but website photos need a Public store. In Vercel → Storage, create a new Blob store and choose Public access, connect it to this project (keep the BLOB prefix), remove the private store, then redeploy.";
 
 export const BLOB_STORE_MISSING =
   "Photo and file storage isn't connected yet. In Vercel, open the project → Storage → connect a Blob store, then redeploy from Deployments. After that, uploads will work.";
