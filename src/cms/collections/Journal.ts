@@ -1,6 +1,12 @@
 import type { CollectionConfig } from "payload";
 import { editorOnly, publishedOrLoggedIn } from "../access";
-import { dateField, setYearFromDate, slugField, yearField } from "../fields";
+import {
+  bySlug,
+  dateField,
+  setYearFromDate,
+  slugField,
+  yearField,
+} from "../fields";
 
 export const Journal: CollectionConfig = {
   slug: "journal",
@@ -9,6 +15,9 @@ export const Journal: CollectionConfig = {
     useAsTitle: "title",
     group: "Media & Writing",
     defaultColumns: ["title", "topic", "date", "_status"],
+    description:
+      "Reflections and stories. A note that posts aren't medical advice is added to every post automatically.",
+    preview: bySlug("/journal"),
   },
   access: { read: publishedOrLoggedIn, ...editorOnly },
   versions: { drafts: true },

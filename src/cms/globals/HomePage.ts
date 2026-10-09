@@ -4,7 +4,10 @@ import { loggedIn } from "../access";
 export const HomePage: GlobalConfig = {
   slug: "home-page",
   label: "Home page",
-  admin: { group: "Pages" },
+  admin: {
+    group: "Pages",
+    preview: () => `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}/`,
+  },
   access: { read: () => true, update: loggedIn },
   fields: [
     {

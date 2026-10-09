@@ -33,7 +33,20 @@ export default buildConfig({
   secret: process.env.PAYLOAD_SECRET || "",
   admin: {
     user: Users.slug,
-    meta: { titleSuffix: " — Naima Asjad admin" },
+    meta: {
+      titleSuffix: " — Naima Asjad admin",
+      icons: [{ rel: "icon", type: "image/svg+xml", url: "/favicon.svg" }],
+    },
+    dateFormat: "d MMM yyyy",
+    components: {
+      graphics: {
+        Logo: "/components/admin/Brand#Logo",
+        Icon: "/components/admin/Brand#Icon",
+      },
+      beforeLogin: ["/components/admin/Brand#LoginWelcome"],
+      beforeDashboard: ["/components/admin/Dashboard#Dashboard"],
+      afterNavLinks: ["/components/admin/NavLinks#NavLinks"],
+    },
     importMap: { baseDir: path.resolve(dirname) },
   },
   collections: [

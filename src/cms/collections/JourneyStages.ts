@@ -1,6 +1,6 @@
 import type { CollectionConfig } from "payload";
 import { editorOnly, publishedOrLoggedIn } from "../access";
-import { slugField } from "../fields";
+import { bySlug, slugField } from "../fields";
 
 export const JourneyStages: CollectionConfig = {
   slug: "journey",
@@ -9,6 +9,7 @@ export const JourneyStages: CollectionConfig = {
     useAsTitle: "title",
     group: "Journey",
     defaultColumns: ["title", "periodLabel", "phase", "progress", "order"],
+    preview: bySlug("/journey"),
     description:
       "Each year of MBBS, then the house job, specialization and career. Records with a matching year appear on that stage's page automatically.",
   },

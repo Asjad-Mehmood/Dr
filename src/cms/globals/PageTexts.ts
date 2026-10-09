@@ -147,6 +147,7 @@ export const PageTexts: GlobalConfig = {
   label: "Page texts",
   admin: {
     group: "Pages",
+    preview: () => `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}/`,
     description: "Headings and introductions for each section page.",
   },
   access: { read: () => true, update: loggedIn },

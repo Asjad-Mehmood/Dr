@@ -4,7 +4,10 @@ import { loggedIn } from "../access";
 export const SiteSettings: GlobalConfig = {
   slug: "site-settings",
   label: "Site settings",
-  admin: { group: "Settings" },
+  admin: {
+    group: "Settings",
+    preview: () => `${process.env.NEXT_PUBLIC_SERVER_URL ?? ""}/`,
+  },
   access: { read: () => true, update: loggedIn },
   fields: [
     {

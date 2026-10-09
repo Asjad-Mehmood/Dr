@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { editorOnly, publishedOrLoggedIn } from "../access";
 import {
+  bySlug,
   categoryField,
   dateField,
   setYearFromDate,
@@ -14,13 +15,21 @@ export const Achievements: CollectionConfig = {
     useAsTitle: "title",
     group: "Achievements",
     defaultColumns: ["title", "category", "date", "_status"],
+    listSearchableFields: ["title", "awardedBy", "summary"],
+    description: "Awards, positions, distinctions and other milestones.",
+    preview: bySlug("/achievements"),
   },
   access: { read: publishedOrLoggedIn, ...editorOnly },
   versions: { drafts: true },
   defaultSort: "-date",
   hooks: { beforeChange: [setYearFromDate] },
   fields: [
-    { name: "title", type: "text", required: true },
+    {
+      name: "title",
+      type: "text",
+      required: true,
+      admin: { placeholder: "e.g. First position in Anatomy" },
+    },
     {
       type: "row",
       fields: [

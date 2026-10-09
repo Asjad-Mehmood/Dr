@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 import { editorOnly, publicPublishedOrLoggedIn } from "../access";
 import {
+  bySlug,
   categoryField,
   dateField,
   pdfField,
@@ -16,17 +17,31 @@ export const Certificates: CollectionConfig = {
     useAsTitle: "title",
     group: "Achievements",
     defaultColumns: ["title", "issuer", "date", "visibility", "_status"],
+    listSearchableFields: ["title", "issuer", "course"],
+    description:
+      "Upload a photo of the certificate (shown on the website) and the original PDF. Mark it private to keep it only in the admin.",
+    preview: bySlug("/certificates"),
   },
   access: { read: publicPublishedOrLoggedIn, ...editorOnly },
   versions: { drafts: true },
   defaultSort: "-date",
   hooks: { beforeChange: [setYearFromDate] },
   fields: [
-    { name: "title", type: "text", required: true },
+    {
+      name: "title",
+      type: "text",
+      required: true,
+      admin: { placeholder: "e.g. Basic Life Support Workshop" },
+    },
     {
       type: "row",
       fields: [
-        { name: "issuer", label: "Issuing organisation", type: "text" },
+        {
+          name: "issuer",
+          label: "Issuing organisation",
+          type: "text",
+          admin: { placeholder: "e.g. CPMC Skills Lab" },
+        },
         dateField(),
       ],
     },
@@ -44,6 +59,7 @@ export const Certificates: CollectionConfig = {
       name: "event",
       type: "relationship",
       relationTo: "events",
+      admin: { description: "The event where this certificate was received." },
     },
     categoryField("certificates"),
     visibilityField,
