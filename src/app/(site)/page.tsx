@@ -107,7 +107,10 @@ export default async function HomePage() {
     <>
       <section className="relative isolate overflow-hidden border-b border-line/70">
         <HeaderBackdrop large />
-        <Container className="flex flex-col items-center pt-14 pb-36 text-center sm:pt-20 sm:pb-44">
+        <Container
+          stagger
+          className="flex flex-col items-center pt-14 pb-36 text-center sm:pt-20 sm:pb-44"
+        >
           {portrait ? (
             <CMSImage
               media={portrait}
@@ -130,7 +133,10 @@ export default async function HomePage() {
               {settings.tagline}
             </p>
           )}
-          <h1 className="mt-4 font-display text-5xl font-semibold tracking-tight text-balance sm:text-7xl lg:text-[5.5rem] lg:leading-[1.05]">
+          <h1
+            data-split
+            className="mt-4 font-display text-5xl font-semibold tracking-tight text-balance sm:text-7xl lg:text-[5.5rem] lg:leading-[1.05]"
+          >
             {displayName(settings)}
           </h1>
           <p className="mt-5 text-lg font-medium text-primary sm:text-2xl">

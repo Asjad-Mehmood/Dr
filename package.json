@@ -14,6 +14,7 @@
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "@payloadcms/db-postgres": "^3.90.2",
     "@payloadcms/next": "^3.90.2",
     "@payloadcms/richtext-lexical": "^3.90.2",
@@ -22,6 +23,7 @@
     "@vercel/blob": "^2.3.1",
     "cross-env": "^10.1.0",
     "graphql": "^16.14.2",
+    "gsap": "^3.15.0",
     "lucide-react": "^1.54.0",
     "next": "16.4.0",
     "payload": "^3.90.2",
