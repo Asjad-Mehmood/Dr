@@ -81,6 +81,9 @@ export default buildConfig({
   plugins: [
     vercelBlobStorage({
       enabled: Boolean(blobToken()),
+      // Keep the plugin's fields in the schema even without a token, so the
+      // database matches whether or not Blob storage is connected.
+      alwaysInsertFields: true,
       collections: { media: true },
       token: blobToken()?.token,
       clientUploads: true,

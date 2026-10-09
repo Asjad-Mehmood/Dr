@@ -243,6 +243,8 @@ export interface Media {
    * Files showing patients are kept private until consent is recorded.
    */
   consentObtained?: boolean | null;
+  prefix?: string | null;
+  _objectKey?: string | null;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -1225,6 +1227,8 @@ export interface MediaSelect<T extends boolean = true> {
   visibility?: T;
   showsPatients?: T;
   consentObtained?: T;
+  prefix?: T;
+  _objectKey?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
