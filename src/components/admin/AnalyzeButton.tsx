@@ -7,14 +7,15 @@ import { useEffect, useRef, useState } from "react";
 type Status =
   | { state: "idle" }
   | { state: "running" }
-  | { state: "success"; message: string }
+  | { state: "success"; message: string; notice?: string }
   | { state: "error"; message: string };
 
 const FALLBACK_ERROR =
   "The analysis could not be completed. Please try again in a moment.";
 
 // Runs the Grok analysis from the top of the AI highlights edit form, then
-// reloads the page so the form shows the new picks.
+// reloads the page so the form shows the new picks. If Grok can't be used,
+// the server picks with its built-in ranking and says why.
 export function AnalyzeButton() {
   const { config } = useConfig();
   const api = config?.routes?.api || "/api";
@@ -44,6 +45,8 @@ export function AnalyzeButton() {
         ok?: boolean;
         picks?: number;
         model?: string;
+        source?: "ai" | "local";
+        notice?: string | null;
         error?: string;
       } | null;
 
@@ -56,15 +59,19 @@ export function AnalyzeButton() {
       }
 
       const picks = data.picks ?? 0;
+      const count = `${picks} ${picks === 1 ? "highlight" : "highlights"}`;
       setStatus({
         state: "success",
-        message: `Done — ${picks} ${picks === 1 ? "highlight" : "highlights"} suggested${
-          data.model ? ` by ${data.model}` : ""
-        }. Reloading…`,
+        message:
+          data.source === "local"
+            ? `Done — ${count} picked with the built-in ranking. Reloading…`
+            : `Done — ${count} suggested${data.model ? ` by ${data.model}` : ""}. Reloading…`,
+        notice: data.notice || undefined,
       });
+      // Leave time to read why the built-in ranking was used.
       reloadTimer.current = window.setTimeout(
         () => window.location.reload(),
-        1000,
+        data.notice ? 4000 : 1000,
       );
     } catch {
       setStatus({
@@ -85,7 +92,8 @@ export function AnalyzeButton() {
           <h2 className="dr-h2 dr-ai-title">Analyse with AI</h2>
           <span className="dr-muted">
             Grok reads every published, public record and suggests the strongest
-            ones. Review the picks below before showing them on the home page.
+            ones. If Grok is unavailable, a built-in ranking picks them instead.
+            Review the picks below before showing them on the home page.
           </span>
         </div>
       </div>
@@ -116,6 +124,12 @@ export function AnalyzeButton() {
         <p className="dr-ai-message dr-ai-message--success" role="status">
           <CircleCheck aria-hidden="true" />
           {status.message}
+        </p>
+      )}
+      {status.state === "success" && status.notice && (
+        <p className="dr-ai-message dr-ai-message--warning" role="status">
+          <CircleAlert aria-hidden="true" />
+          {status.notice}
         </p>
       )}
       {status.state === "error" && (

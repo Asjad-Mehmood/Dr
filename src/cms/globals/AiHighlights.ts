@@ -33,7 +33,7 @@ export const AiHighlights: GlobalConfig = {
   admin: {
     group: "Pages",
     description:
-      "Grok (xAI) reads every published, public record and suggests the strongest ones for the home page. Review or edit the picks, then tick “Show on home page”. Only public information is ever sent; drafts, private items and unverified numbers are not.",
+      "Grok (xAI) reads every published, public record and suggests the strongest ones for the home page; if Grok is unavailable, a built-in ranking picks them from the same records. Review or edit the picks, then tick “Show on home page”. Only public information is ever sent; drafts, private items and unverified numbers are not.",
   },
   // Admin-only: unreviewed AI text must not be readable through the API. The
   // home page reads it with the Local API, which bypasses access control.
@@ -178,7 +178,7 @@ export const AiHighlights: GlobalConfig = {
         },
         {
           name: "lastError",
-          label: "Last error",
+          label: "Last error or note",
           type: "textarea",
           admin: { readOnly: true },
         },

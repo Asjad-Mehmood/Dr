@@ -552,6 +552,10 @@ html[data-theme="dark"] .dr-btn--primary {
   background: var(--theme-error-100);
   color: var(--theme-error-750);
 }
+.dr-ai-message--warning {
+  background: var(--theme-warning-100);
+  color: var(--theme-warning-750);
+}
 @media (prefers-reduced-motion: reduce) {
   .dr-ai-spin {
     animation-duration: 2.5s;

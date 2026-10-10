@@ -66,6 +66,13 @@ for a **Highlights** section on the home page.
    with AI**.
 4. Check and edit the picks, tick **Show on home page**, and save.
 
+If Grok can't be used (no key, a wrong key, no credits, a time-out, or an
+answer with no usable picks), a **built-in ranking** picks the highlights from
+the same records instead. It scores verified people served, awards, research,
+leadership roles, photos and recency, and writes short reasons from the
+records' own facts. The admin shows why it was used (*Last error or note*),
+and **Model used** reads *Built-in ranking*.
+
 Only public information is sent: drafts, private certificates and
 documents, private photos and unverified numbers never are. Picks that don't
 match a real record are discarded, and every new analysis switches **Show on
