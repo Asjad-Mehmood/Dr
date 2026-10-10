@@ -6,7 +6,6 @@ import {
   Images,
   Microscope,
   NotebookPen,
-  Sparkles,
   Stethoscope,
   Trophy,
   type LucideIcon,
@@ -21,7 +20,6 @@ import {
   canShowMedia,
   getCMS,
   getPageTexts,
-  getSettings,
   list,
 } from "@/lib/cms";
 import { formatDate } from "@/lib/format";
@@ -219,7 +217,7 @@ export async function AiHighlightsSection() {
   }
   if (!global?.showOnHome || !global.picks?.length) return null;
 
-  const [texts, settings] = await Promise.all([getPageTexts(), getSettings()]);
+  const texts = await getPageTexts();
   const max = Math.max(1, Math.min(global.maxItems ?? 4, 8));
   const resolved = await Promise.all(
     global.picks
@@ -231,7 +229,6 @@ export async function AiHighlightsSection() {
 
   const strongest = global.strongestSection;
   const strongestSection = strongest?.key ? sections[strongest.key] : null;
-  const firstName = settings.name?.trim().split(/\s+/)[0];
 
   return (
     <section className="pt-20 sm:pt-24">
@@ -246,7 +243,7 @@ export async function AiHighlightsSection() {
         {strongest?.label && (
           <div className="reveal mt-10 flex flex-col gap-5 rounded-2xl border border-line bg-primary-soft/60 p-6 sm:flex-row sm:items-center sm:p-8">
             <IconBadge
-              icon={Sparkles}
+              icon={Trophy}
               size="lg"
               className="bg-surface shadow-soft"
             />
@@ -332,14 +329,6 @@ export async function AiHighlightsSection() {
             </li>
           ))}
         </ul>
-
-        <p className="mt-6 flex items-center gap-2 text-xs text-muted">
-          <Sparkles aria-hidden="true" className="size-3.5 text-primary" />
-          <span>
-            Selected with AI from published records and reviewed by{" "}
-            {firstName || "the site owner"}.
-          </span>
-        </p>
       </Container>
     </section>
   );

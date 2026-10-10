@@ -110,12 +110,14 @@ function configurationChecks(): Check[] {
           ? "BLOB_READ_WRITE_TOKEN is not set — uploads won't work on Vercel."
           : "Not set — uploads are saved to the local disk.",
     ),
+    // Neutral wording: the public status page doesn't say which service
+    // powers the highlights (this is the XAI_API_KEY setting).
     set(
-      "AI (xAI Grok) key",
+      "Highlights key",
       true,
       xaiConfig().apiKey
-        ? `Set · model ${xaiConfig().model}`
-        : "Not set — AI highlights are off until XAI_API_KEY is added.",
+        ? "Set"
+        : "Not set — automatic highlights are off (optional).",
       true,
     ),
     set(

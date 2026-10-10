@@ -60,7 +60,7 @@ for a **Highlights** section on the home page.
 
 1. Create an API key at [console.x.ai](https://console.x.ai) (add credits).
 2. In Vercel → Settings → Environment Variables add `XAI_API_KEY`, then
-   redeploy. Optional: `XAI_MODEL` (default `grok-4.3`) and
+   redeploy (`/health` then shows **Highlights key: Set**). Optional: `XAI_MODEL` (default `grok-4.3`) and
    `XAI_REASONING_EFFORT` (`low` by default).
 3. In the admin open **Pages → AI highlights** and press **Analyze records
    with AI**.
@@ -69,7 +69,8 @@ for a **Highlights** section on the home page.
 Only public information is sent: drafts, private certificates and
 documents, private photos and unverified numbers never are. Picks that don't
 match a real record are discarded, and every new analysis switches **Show on
-home page** off again until it has been reviewed.
+home page** off again until it has been reviewed. The public website never
+mentions AI: the section simply appears as **Highlights**.
 
 ## Running locally
 
