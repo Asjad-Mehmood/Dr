@@ -53,6 +53,25 @@ post-nominals to `MBBS`, and update the role. The whole site updates.
 The impact numbers on the home page (camps, people served, certificates,
 workshops, research, publications…) are calculated from these records.
 
+## AI highlights (xAI Grok)
+
+Grok can read every published, public record and suggest the strongest ones
+for a **Highlights** section on the home page.
+
+1. Create an API key at [console.x.ai](https://console.x.ai) (add credits).
+2. In Vercel → Settings → Environment Variables add `XAI_API_KEY`, then
+   redeploy (`/health` then shows **Highlights key: Set**). Optional: `XAI_MODEL` (default `grok-4.3`) and
+   `XAI_REASONING_EFFORT` (`low` by default).
+3. In the admin open **Pages → AI highlights** and press **Analyze records
+   with AI**.
+4. Check and edit the picks, tick **Show on home page**, and save.
+
+Only public information is sent: drafts, private certificates and
+documents, private photos and unverified numbers never are. Picks that don't
+match a real record are discarded, and every new analysis switches **Show on
+home page** off again until it has been reviewed. The public website never
+mentions AI: the section simply appears as **Highlights**.
+
 ## Running locally
 
 Requires Node.js 20.9+ and PostgreSQL.

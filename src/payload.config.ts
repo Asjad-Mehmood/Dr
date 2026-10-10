@@ -20,17 +20,44 @@ import { MedicalCamps } from "./cms/collections/MedicalCamps";
 import { Research } from "./cms/collections/Research";
 import { Users } from "./cms/collections/Users";
 import { AboutPage } from "./cms/globals/AboutPage";
+import { AiHighlights } from "./cms/globals/AiHighlights";
 import { HomePage } from "./cms/globals/HomePage";
 import { PageTexts } from "./cms/globals/PageTexts";
 import { SiteSettings } from "./cms/globals/SiteSettings";
 import { seedIfEmpty } from "./cms/seed";
+import { analyzeHighlightsEndpoint } from "./lib/ai/endpoint";
 import { blobToken } from "./lib/setup";
 import { migrations } from "./migrations";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+// Exact origin (no trailing slash or path): csrf compares it to the Origin
+// header character for character.
+const serverURL = (() => {
+  const raw = process.env.NEXT_PUBLIC_SERVER_URL?.trim();
+  if (!raw) return "";
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return raw;
+  }
+})();
+
+// Cookie-authenticated requests are checked against these origins. With no
+// site address set the list is empty and Payload accepts any origin (the
+// SameSite=Lax cookie still blocks cross-site use); once one is set (e.g. a
+// custom domain), keep the deployment's Vercel addresses working too.
+const vercelOrigins = [
+  process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  process.env.VERCEL_BRANCH_URL,
+  process.env.VERCEL_URL,
+]
+  .filter(Boolean)
+  .map((host) => `https://${host}`);
+
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || "",
+  serverURL,
+  csrf: serverURL ? [serverURL, ...vercelOrigins] : [],
   secret: process.env.PAYLOAD_SECRET || "",
   admin: {
     user: Users.slug,
@@ -66,7 +93,8 @@ export default buildConfig({
     Categories,
     Users,
   ],
-  globals: [SiteSettings, HomePage, AboutPage, PageTexts],
+  globals: [SiteSettings, HomePage, AboutPage, PageTexts, AiHighlights],
+  endpoints: [analyzeHighlightsEndpoint],
   editor: lexicalEditor(),
   db: postgresAdapter({
     pool: {

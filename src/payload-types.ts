@@ -116,12 +116,14 @@ export interface Config {
     'home-page': HomePage;
     'about-page': AboutPage;
     'page-texts': PageText;
+    'ai-highlights': AiHighlight;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     'about-page': AboutPageSelect<false> | AboutPageSelect<true>;
     'page-texts': PageTextsSelect<false> | PageTextsSelect<true>;
+    'ai-highlights': AiHighlightsSelect<false> | AiHighlightsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -1591,6 +1593,74 @@ export interface PageText {
   createdAt?: string | null;
 }
 /**
+ * Grok (xAI) reads every published, public record and suggests the strongest ones for the home page. Review or edit the picks, then tick “Show on home page”. Only public information is ever sent; drafts, private items and unverified numbers are not.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-highlights".
+ */
+export interface AiHighlight {
+  id: number;
+  /**
+   * Leave off until you have checked the picks below.
+   */
+  showOnHome?: boolean | null;
+  maxItems?: number | null;
+  title?: string | null;
+  intro?: string | null;
+  /**
+   * The part of the portfolio the AI found strongest.
+   */
+  strongestSection?: {
+    key?:
+      | (
+          | 'journey'
+          | 'academic'
+          | 'research'
+          | 'community'
+          | 'camps'
+          | 'events'
+          | 'achievements'
+          | 'certificates'
+          | 'gallery'
+          | 'journal'
+        )
+      | null;
+    label?: string | null;
+    reason?: string | null;
+  };
+  /**
+   * Drag to reorder, edit the wording or remove any pick. Records that are later unpublished or made private are skipped on the website automatically.
+   */
+  picks?:
+    | {
+        collection:
+          | 'events'
+          | 'achievements'
+          | 'certificates'
+          | 'research'
+          | 'community'
+          | 'medical-camps'
+          | 'journal'
+          | 'gallery'
+          | 'academic-records';
+        docId: number;
+        /**
+         * e.g. Leadership, Research
+         */
+        label?: string | null;
+        title?: string | null;
+        reason?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  lastAnalyzedAt?: string | null;
+  model?: string | null;
+  recordsAnalyzed?: number | null;
+  lastError?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -1823,6 +1893,40 @@ export interface PageTextsSelect<T extends boolean = true> {
         intro?: T;
         note?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-highlights_select".
+ */
+export interface AiHighlightsSelect<T extends boolean = true> {
+  showOnHome?: T;
+  maxItems?: T;
+  title?: T;
+  intro?: T;
+  strongestSection?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        reason?: T;
+      };
+  picks?:
+    | T
+    | {
+        collection?: T;
+        docId?: T;
+        label?: T;
+        title?: T;
+        reason?: T;
+        id?: T;
+      };
+  lastAnalyzedAt?: T;
+  model?: T;
+  recordsAnalyzed?: T;
+  lastError?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -1,5 +1,6 @@
 import { MapPin, Stethoscope } from "lucide-react";
 import Link from "next/link";
+import { AiHighlightsSection } from "@/components/ai-highlights";
 import { CountUp } from "@/components/count-up";
 import { IconBadge, iconFor } from "@/components/icons";
 import { JourneyTimeline } from "@/components/journey-timeline";
@@ -76,6 +77,8 @@ export default async function HomePage() {
     camps.find((c) => c.campStatus === "planned") ??
     camps.at(-1);
   const impactShown = impact.filter((item) => item.value > 0);
+  // A single number looks lonely; wait until there are at least two.
+  const MIN_IMPACT_ITEMS = 2;
   const latest = [
     ...latestEvents.map((e) => ({
       key: `e${e.id}`,
@@ -218,6 +221,8 @@ export default async function HomePage() {
         </section>
       )}
 
+      <AiHighlightsSection />
+
       {home.showTimeline && stages.length > 0 && (
         <section className="py-24 sm:py-28">
           <Container className="grid gap-12 lg:grid-cols-[1fr_1.3fr]">
@@ -239,14 +244,14 @@ export default async function HomePage() {
         </section>
       )}
 
-      {home.showImpact && impactShown.length > 0 && (
+      {home.showImpact && impactShown.length >= MIN_IMPACT_ITEMS && (
         <section className="border-y border-line bg-surface py-20">
           <Container>
             <SectionHeading
               eyebrow="Impact"
               title={home.impactTitle || "Impact"}
             />
-            <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
               {impactShown.map((item) => (
                 <div
                   key={item.label}

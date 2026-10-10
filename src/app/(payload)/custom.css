@@ -472,3 +472,88 @@ html[data-theme="dark"] .dr-btn--primary {
     padding: 16px;
   }
 }
+
+/* ---------- AI highlights: Analyze button (dr-ai-*) ---------- */
+
+.dr-ai-panel {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 28px;
+  font-size: 14px;
+  background:
+    radial-gradient(circle at 100% 0%, var(--dr-primary-soft), transparent 60%),
+    var(--theme-elevation-0);
+}
+.dr-ai-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.dr-ai-copy {
+  flex: 1;
+  min-width: 0;
+}
+.dr-ai-title {
+  margin-bottom: 4px;
+}
+.dr-ai-copy .dr-muted {
+  font-size: 14px;
+  line-height: 1.5;
+}
+.dr-ai-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.dr-ai-button {
+  cursor: pointer;
+  font-size: 14px;
+}
+.dr-ai-button:disabled {
+  cursor: progress;
+  opacity: 0.7;
+}
+.dr-ai-button:disabled:hover {
+  background: var(--dr-primary);
+}
+.dr-ai-button:focus-visible {
+  outline: 2px solid var(--dr-primary);
+  outline-offset: 2px;
+}
+.dr-ai-spin {
+  animation: dr-ai-spin 0.9s linear infinite;
+}
+@keyframes dr-ai-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.dr-ai-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 10px 14px;
+  border-radius: var(--style-radius-l);
+  line-height: 1.5;
+}
+.dr-ai-message svg {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+}
+.dr-ai-message--success {
+  background: var(--theme-success-100);
+  color: var(--dr-success);
+}
+.dr-ai-message--error {
+  background: var(--theme-error-100);
+  color: var(--theme-error-750);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dr-ai-spin {
+    animation-duration: 2.5s;
+  }
+}

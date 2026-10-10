@@ -7,6 +7,7 @@ import {
   put as putBlob,
 } from "@vercel/blob";
 import { getPayload, type CollectionSlug, type GlobalSlug } from "payload";
+import { xaiConfig } from "./ai/xai";
 import {
   BLOB_STORE_MISSING,
   BLOB_STORE_PRIVATE,
@@ -108,6 +109,16 @@ function configurationChecks(): Check[] {
         : uploadsNeedBlobStore()
           ? "BLOB_READ_WRITE_TOKEN is not set — uploads won't work on Vercel."
           : "Not set — uploads are saved to the local disk.",
+    ),
+    // Neutral wording: the public status page doesn't say which service
+    // powers the highlights (this is the XAI_API_KEY setting).
+    set(
+      "Highlights key",
+      true,
+      xaiConfig().apiKey
+        ? "Set"
+        : "Not set — automatic highlights are off (optional).",
+      true,
     ),
     set(
       "Site address",
@@ -261,16 +272,23 @@ export async function runHealthChecks(origin: string): Promise<HealthReport> {
           ),
         ),
         Promise.all(
-          p.config.globals.map((g) =>
-            timed(labelOf(g.label, g.slug), async () => {
-              await p.findGlobal({
-                slug: g.slug as GlobalSlug,
-                overrideAccess: false,
-                depth: 0,
-              });
-              return "Readable";
-            }),
-          ),
+          p.config.globals.map((g) => {
+            // The highlights settings are admin-only by design and are read
+            // internally by the home page; check them that way, with a
+            // neutral name on this public page.
+            const internal = g.slug === "ai-highlights";
+            return timed(
+              internal ? "Highlights" : labelOf(g.label, g.slug),
+              async () => {
+                await p.findGlobal({
+                  slug: g.slug as GlobalSlug,
+                  overrideAccess: internal,
+                  depth: 0,
+                });
+                return "Readable";
+              },
+            );
+          }),
         ),
       ]);
       groups.push({ title: "Content collections", checks: collectionChecks });
