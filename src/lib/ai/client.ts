@@ -1,5 +1,6 @@
 // Minimal client for OpenAI-compatible chat completions APIs: Groq (free
-// plan, GROQ_API_KEY) or xAI's Grok (XAI_API_KEY). Groq wins if both are set.
+// plan) or xAI's Grok. Groq keys start with "gsk_" and are recognised in
+// GROQ_API_KEY or XAI_API_KEY; Groq wins if both providers have a key.
 
 const REASONING_EFFORTS = ["none", "low", "medium", "high"] as const;
 
@@ -35,13 +36,18 @@ export class AiError extends Error {
 // The *_BASE_URL settings can point at a regional endpoint or a local
 // stand-in for testing.
 export function aiConfig(): Provider {
-  if (env("GROQ_API_KEY")) {
+  const groqKeyName = ["GROQ_API_KEY", "XAI_API_KEY"].find(
+    (name) =>
+      env(name) &&
+      (name === "GROQ_API_KEY" || env(name)!.toLowerCase().startsWith("gsk_")),
+  );
+  if (groqKeyName) {
     return {
       id: "groq",
       name: "Groq",
-      keyName: "GROQ_API_KEY",
+      keyName: groqKeyName,
       console: "console.groq.com",
-      apiKey: env("GROQ_API_KEY"),
+      apiKey: env(groqKeyName),
       // Free, and one of the models Groq runs with strict structured outputs.
       model: env("GROQ_MODEL") ?? "openai/gpt-oss-120b",
       reasoningEffort: effort("GROQ_REASONING_EFFORT"),

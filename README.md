@@ -70,7 +70,8 @@ for a **Highlights** section on the home page.
 
 xAI's Grok works too (paid): set `XAI_API_KEY` from
 [console.x.ai](https://console.x.ai) instead (optional `XAI_MODEL`, default
-`grok-4.3`). If both keys are set, Groq is used. Groq's free plan takes only a
+`grok-4.3`). A Groq key (it starts with `gsk_`) is also recognised in
+`XAI_API_KEY`. If both providers have a key, Groq is used. Groq's free plan takes only a
 few thousand words per minute, so the strongest-looking records are sent first,
 as many as fit.
 
