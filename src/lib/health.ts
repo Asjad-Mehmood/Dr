@@ -272,16 +272,23 @@ export async function runHealthChecks(origin: string): Promise<HealthReport> {
           ),
         ),
         Promise.all(
-          p.config.globals.map((g) =>
-            timed(labelOf(g.label, g.slug), async () => {
-              await p.findGlobal({
-                slug: g.slug as GlobalSlug,
-                overrideAccess: false,
-                depth: 0,
-              });
-              return "Readable";
-            }),
-          ),
+          p.config.globals.map((g) => {
+            // The highlights settings are admin-only by design and are read
+            // internally by the home page; check them that way, with a
+            // neutral name on this public page.
+            const internal = g.slug === "ai-highlights";
+            return timed(
+              internal ? "Highlights" : labelOf(g.label, g.slug),
+              async () => {
+                await p.findGlobal({
+                  slug: g.slug as GlobalSlug,
+                  overrideAccess: internal,
+                  depth: 0,
+                });
+                return "Readable";
+              },
+            );
+          }),
         ),
       ]);
       groups.push({ title: "Content collections", checks: collectionChecks });
