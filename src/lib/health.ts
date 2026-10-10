@@ -7,6 +7,7 @@ import {
   put as putBlob,
 } from "@vercel/blob";
 import { getPayload, type CollectionSlug, type GlobalSlug } from "payload";
+import { xaiConfig } from "./ai/xai";
 import {
   BLOB_STORE_MISSING,
   BLOB_STORE_PRIVATE,
@@ -112,8 +113,8 @@ function configurationChecks(): Check[] {
     set(
       "AI (xAI Grok) key",
       true,
-      process.env.XAI_API_KEY
-        ? `Set · model ${process.env.XAI_MODEL || "grok-4.3"}`
+      xaiConfig().apiKey
+        ? `Set · model ${xaiConfig().model}`
         : "Not set — AI highlights are off until XAI_API_KEY is added.",
       true,
     ),

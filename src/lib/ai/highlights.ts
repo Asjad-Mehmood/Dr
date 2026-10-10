@@ -258,11 +258,9 @@ export async function analyzeHighlights(payload: Payload) {
       showOnHome: false,
       intro: clip(String(data.intro ?? ""), 300),
       strongestSection: {
-        key: sectionKey,
-        label: sectionKey ? clip(String(section.label ?? ""), 80) : undefined,
-        reason: sectionKey
-          ? clip(String(section.reason ?? ""), 300)
-          : undefined,
+        key: sectionKey ?? null,
+        label: sectionKey ? clip(String(section.label ?? ""), 80) : null,
+        reason: sectionKey ? clip(String(section.reason ?? ""), 300) : null,
       },
       picks,
       lastAnalyzedAt: new Date().toISOString(),

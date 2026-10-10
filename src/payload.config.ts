@@ -31,11 +31,22 @@ import { migrations } from "./migrations";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || "";
+// Exact origin (no trailing slash or path): csrf compares it to the Origin
+// header character for character.
+const serverURL = (() => {
+  const raw = process.env.NEXT_PUBLIC_SERVER_URL?.trim();
+  if (!raw) return "";
+  try {
+    return new URL(raw).origin;
+  } catch {
+    return raw;
+  }
+})();
 
-// Signed-in requests are only accepted from trusted origins. With no site
-// address set, Payload accepts same-site requests; once one is set (e.g. a
-// custom domain), keep the Vercel addresses working too.
+// Cookie-authenticated requests are checked against these origins. With no
+// site address set the list is empty and Payload accepts any origin (the
+// SameSite=Lax cookie still blocks cross-site use); once one is set (e.g. a
+// custom domain), keep the deployment's Vercel addresses working too.
 const vercelOrigins = [
   process.env.VERCEL_PROJECT_PRODUCTION_URL,
   process.env.VERCEL_BRANCH_URL,

@@ -37,7 +37,7 @@ export async function xaiJson<T>({
   messages,
   schemaName,
   schema,
-  timeoutMs = 55_000,
+  timeoutMs = 50_000,
 }: {
   messages: Message[];
   schemaName: string;
@@ -52,9 +52,8 @@ export async function xaiJson<T>({
     );
   }
 
-  let response: Response;
-  try {
-    response = await fetch(xaiUrl(), {
+  const send = (withReasoning: boolean) =>
+    fetch(xaiUrl(), {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -64,7 +63,7 @@ export async function xaiJson<T>({
         model,
         messages,
         // No temperature/penalties: reasoning models reject or ignore them.
-        reasoning_effort: reasoningEffort,
+        ...(withReasoning ? { reasoning_effort: reasoningEffort } : {}),
         response_format: {
           type: "json_schema",
           json_schema: { name: schemaName, schema, strict: true },
@@ -72,6 +71,15 @@ export async function xaiJson<T>({
       }),
       signal: AbortSignal.timeout(timeoutMs),
     });
+
+  let response: Response;
+  try {
+    response = await send(true);
+    // Some models don't take reasoning_effort; retry once without it.
+    if (response.status === 400) {
+      const detail = await response.clone().text();
+      if (/reasoning/i.test(detail)) response = await send(false);
+    }
   } catch (error) {
     const timedOut = error instanceof Error && error.name === "TimeoutError";
     throw new AiError(
@@ -89,10 +97,8 @@ export async function xaiJson<T>({
       `xAI request failed (${response.status}):`,
       detail.slice(0, 500),
     );
-    throw new AiError(
-      friendlyError(response.status, detail, model),
-      response.status,
-    );
+    // 502: the problem is upstream, not with the signed-in editor.
+    throw new AiError(friendlyError(response.status, detail, model), 502);
   }
 
   const body = (await response.json()) as {
@@ -126,7 +132,10 @@ function friendlyError(status: number, detail: string, model: string) {
   if (status === 429) {
     return "xAI rate limit or credit limit reached. Please wait a little, or check credits in the xAI console.";
   }
-  if (/model/i.test(detail) || status === 404) {
+  if (
+    status === 404 ||
+    /model[^.]*(not found|does not exist|unknown|invalid)/i.test(detail)
+  ) {
     return `xAI could not use the model “${model}”. Set XAI_MODEL in Vercel to a model your account can use (for example grok-4.3).`;
   }
   return `The xAI service returned an error (${status}). Please try again later.`;

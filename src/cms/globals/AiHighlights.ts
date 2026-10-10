@@ -35,7 +35,9 @@ export const AiHighlights: GlobalConfig = {
     description:
       "Grok (xAI) reads every published, public record and suggests the strongest ones for the home page. Review or edit the picks, then tick “Show on home page”. Only public information is ever sent; drafts, private items and unverified numbers are not.",
   },
-  access: { read: () => true, update: loggedIn },
+  // Admin-only: unreviewed AI text must not be readable through the API. The
+  // home page reads it with the Local API, which bypasses access control.
+  access: { read: loggedIn, update: loggedIn },
   fields: [
     {
       name: "analyze",
