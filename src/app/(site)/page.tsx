@@ -77,6 +77,8 @@ export default async function HomePage() {
     camps.find((c) => c.campStatus === "planned") ??
     camps.at(-1);
   const impactShown = impact.filter((item) => item.value > 0);
+  // A single number looks lonely; wait until there are at least two.
+  const MIN_IMPACT_ITEMS = 2;
   const latest = [
     ...latestEvents.map((e) => ({
       key: `e${e.id}`,
@@ -242,14 +244,14 @@ export default async function HomePage() {
         </section>
       )}
 
-      {home.showImpact && impactShown.length > 0 && (
+      {home.showImpact && impactShown.length >= MIN_IMPACT_ITEMS && (
         <section className="border-y border-line bg-surface py-20">
           <Container>
             <SectionHeading
               eyebrow="Impact"
               title={home.impactTitle || "Impact"}
             />
-            <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <dl className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-[repeat(auto-fit,minmax(11rem,1fr))]">
               {impactShown.map((item) => (
                 <div
                   key={item.label}
