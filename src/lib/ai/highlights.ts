@@ -3,8 +3,8 @@ import {
   highlightCollections,
   highlightSections,
 } from "@/cms/globals/AiHighlights";
-import { rankLocally } from "./local-ranking";
-import { AiError, xaiJson } from "./xai";
+import { aiConfig, aiJson, AiError } from "./client";
+import { rankLocally, score } from "./local-ranking";
 
 export const BUILT_IN_RANKING = "Built-in ranking";
 
@@ -146,28 +146,27 @@ const schema = {
   additionalProperties: false,
   required: ["intro", "strongestSection", "picks"],
   properties: {
-    intro: { type: "string", maxLength: 300 },
+    intro: { type: "string" },
     strongestSection: {
       type: "object",
       additionalProperties: false,
       required: ["key", "label", "reason"],
       properties: {
         key: { type: "string", enum: highlightSections.map((s) => s.value) },
-        label: { type: "string", maxLength: 80 },
-        reason: { type: "string", maxLength: 300 },
+        label: { type: "string" },
+        reason: { type: "string" },
       },
     },
     picks: {
       type: "array",
-      maxItems: 12,
       items: {
         type: "object",
         additionalProperties: false,
         required: ["ref", "label", "reason"],
         properties: {
           ref: { type: "string" },
-          label: { type: "string", maxLength: 30 },
-          reason: { type: "string", maxLength: 220 },
+          label: { type: "string" },
+          reason: { type: "string" },
         },
       },
     },
@@ -190,7 +189,27 @@ export async function analyzeHighlights(payload: Payload) {
     );
   }
 
-  const records = [...byRef.values()].map((r) => r.entry);
+  // Strongest-looking records first, then as many as fit one request (the
+  // free Groq plan only takes a few thousand tokens a minute).
+  const now = Date.now();
+  const ranked = [...byRef.entries()]
+    .map(([ref, { collection, doc, entry }]) => ({
+      entry,
+      score: score(
+        { ref, collection, doc, title: titleOf(doc, collection) },
+        now,
+      ),
+    }))
+    .sort((a, b) => b.score - a.score);
+  const budget = aiConfig().maxInputChars;
+  const records: Record<string, unknown>[] = [];
+  let used = 0;
+  for (const { entry } of ranked) {
+    const size = JSON.stringify(entry).length + 1;
+    if (records.length > 0 && used + size > budget) break;
+    records.push(entry);
+    used += size;
+  }
   const sectionCounts = {
     events: counts.events ?? 0,
     achievements: counts.achievements ?? 0,
@@ -222,7 +241,7 @@ export async function analyzeHighlights(payload: Payload) {
     notice: string | null;
   };
   try {
-    const { data, model } = await xaiJson<AiAnswer>({
+    const { data, model } = await aiJson<AiAnswer>({
       schemaName: "portfolio_highlights",
       schema,
       messages: [
@@ -262,7 +281,7 @@ export async function analyzeHighlights(payload: Payload) {
       notice: null,
     };
   } catch (error) {
-    // xAI missing, failing or unhelpful: fall back to the built-in ranking.
+    // AI missing, failing or unhelpful: fall back to the built-in ranking.
     const why =
       error instanceof AiError
         ? error.message

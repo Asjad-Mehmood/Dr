@@ -1,4 +1,4 @@
-// Built-in ranking used when xAI is unavailable: scores each published
+// Built-in ranking used when the AI is unavailable: scores each published
 // record from its own facts and writes tags and reasons from those facts only.
 
 export type Candidate = {
@@ -119,7 +119,7 @@ function firstSentence(text: string, maxWords = 25) {
     : sentence;
 }
 
-function score(c: Candidate, now: number) {
+export function score(c: Candidate, now = Date.now()) {
   const { doc } = c;
   let total = baseScore[c.collection] ?? 10;
 
