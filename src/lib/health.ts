@@ -110,6 +110,14 @@ function configurationChecks(): Check[] {
           : "Not set — uploads are saved to the local disk.",
     ),
     set(
+      "AI (xAI Grok) key",
+      true,
+      process.env.XAI_API_KEY
+        ? `Set · model ${process.env.XAI_MODEL || "grok-4.3"}`
+        : "Not set — AI highlights are off until XAI_API_KEY is added.",
+      true,
+    ),
+    set(
       "Site address",
       true,
       process.env.NEXT_PUBLIC_SERVER_URL

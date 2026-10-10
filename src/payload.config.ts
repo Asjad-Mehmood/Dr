@@ -20,10 +20,12 @@ import { MedicalCamps } from "./cms/collections/MedicalCamps";
 import { Research } from "./cms/collections/Research";
 import { Users } from "./cms/collections/Users";
 import { AboutPage } from "./cms/globals/AboutPage";
+import { AiHighlights } from "./cms/globals/AiHighlights";
 import { HomePage } from "./cms/globals/HomePage";
 import { PageTexts } from "./cms/globals/PageTexts";
 import { SiteSettings } from "./cms/globals/SiteSettings";
 import { seedIfEmpty } from "./cms/seed";
+import { analyzeHighlightsEndpoint } from "./lib/ai/endpoint";
 import { blobToken } from "./lib/setup";
 import { migrations } from "./migrations";
 
@@ -66,7 +68,8 @@ export default buildConfig({
     Categories,
     Users,
   ],
-  globals: [SiteSettings, HomePage, AboutPage, PageTexts],
+  globals: [SiteSettings, HomePage, AboutPage, PageTexts, AiHighlights],
+  endpoints: [analyzeHighlightsEndpoint],
   editor: lexicalEditor(),
   db: postgresAdapter({
     pool: {
