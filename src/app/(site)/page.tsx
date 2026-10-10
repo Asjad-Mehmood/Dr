@@ -1,5 +1,6 @@
 import { MapPin, Stethoscope } from "lucide-react";
 import Link from "next/link";
+import { AiHighlightsSection } from "@/components/ai-highlights";
 import { CountUp } from "@/components/count-up";
 import { IconBadge, iconFor } from "@/components/icons";
 import { JourneyTimeline } from "@/components/journey-timeline";
@@ -217,6 +218,8 @@ export default async function HomePage() {
           </Container>
         </section>
       )}
+
+      <AiHighlightsSection />
 
       {home.showTimeline && stages.length > 0 && (
         <section className="py-24 sm:py-28">

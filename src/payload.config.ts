@@ -31,8 +31,22 @@ import { migrations } from "./migrations";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
+const serverURL = process.env.NEXT_PUBLIC_SERVER_URL || "";
+
+// Signed-in requests are only accepted from trusted origins. With no site
+// address set, Payload accepts same-site requests; once one is set (e.g. a
+// custom domain), keep the Vercel addresses working too.
+const vercelOrigins = [
+  process.env.VERCEL_PROJECT_PRODUCTION_URL,
+  process.env.VERCEL_BRANCH_URL,
+  process.env.VERCEL_URL,
+]
+  .filter(Boolean)
+  .map((host) => `https://${host}`);
+
 export default buildConfig({
-  serverURL: process.env.NEXT_PUBLIC_SERVER_URL || "",
+  serverURL,
+  csrf: serverURL ? [serverURL, ...vercelOrigins] : [],
   secret: process.env.PAYLOAD_SECRET || "",
   admin: {
     user: Users.slug,
