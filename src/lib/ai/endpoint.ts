@@ -1,6 +1,6 @@
 import type { Endpoint } from "payload";
 import { analyzeHighlights } from "./highlights";
-import { AiError } from "./xai";
+import { AiError } from "./client";
 
 // POST /api/ai-highlights/analyze — signed-in editors only. Runs the AI
 // analysis and stores the suggested highlights for review in the admin.

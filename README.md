@@ -53,20 +53,28 @@ post-nominals to `MBBS`, and update the role. The whole site updates.
 The impact numbers on the home page (camps, people served, certificates,
 workshops, research, publications…) are calculated from these records.
 
-## AI highlights (xAI Grok)
+## AI highlights (Groq — free, or xAI Grok)
 
-Grok can read every published, public record and suggest the strongest ones
+An AI can read every published, public record and suggest the strongest ones
 for a **Highlights** section on the home page.
 
-1. Create an API key at [console.x.ai](https://console.x.ai) (add credits).
-2. In Vercel → Settings → Environment Variables add `XAI_API_KEY`, then
-   redeploy (`/health` then shows **Highlights key: Set**). Optional: `XAI_MODEL` (default `grok-4.3`) and
-   `XAI_REASONING_EFFORT` (`low` by default).
+1. Create a free API key at [console.groq.com](https://console.groq.com/keys)
+   (**API Keys → Create API Key**; no card needed).
+2. In Vercel → Settings → Environment Variables add `GROQ_API_KEY`, then
+   redeploy (`/health` then shows **Highlights key: Set**). Optional:
+   `GROQ_MODEL` (default `openai/gpt-oss-120b`) and `GROQ_REASONING_EFFORT`
+   (`low` by default).
 3. In the admin open **Pages → AI highlights** and press **Analyze records
    with AI**.
 4. Check and edit the picks, tick **Show on home page**, and save.
 
-If Grok can't be used (no key, a wrong key, no credits, a time-out, or an
+xAI's Grok works too (paid): set `XAI_API_KEY` from
+[console.x.ai](https://console.x.ai) instead (optional `XAI_MODEL`, default
+`grok-4.3`). If both keys are set, Groq is used. Groq's free plan takes only a
+few thousand words per minute, so the strongest-looking records are sent first,
+as many as fit.
+
+If the AI can't be used (no key, a wrong key, a usage limit, a time-out, or an
 answer with no usable picks), a **built-in ranking** picks the highlights from
 the same records instead. It scores verified people served, awards, research,
 leadership roles, photos and recency, and writes short reasons from the

@@ -13,9 +13,9 @@ type Status =
 const FALLBACK_ERROR =
   "The analysis could not be completed. Please try again in a moment.";
 
-// Runs the Grok analysis from the top of the AI highlights edit form, then
-// reloads the page so the form shows the new picks. If Grok can't be used,
-// the server picks with its built-in ranking and says why.
+// Runs the AI analysis (Groq or Grok) from the top of the AI highlights edit
+// form, then reloads the page so the form shows the new picks. If the AI
+// can't be used, the server picks with its built-in ranking and says why.
 export function AnalyzeButton() {
   const { config } = useConfig();
   const api = config?.routes?.api || "/api";
@@ -91,9 +91,10 @@ export function AnalyzeButton() {
         <div className="dr-ai-copy">
           <h2 className="dr-h2 dr-ai-title">Analyse with AI</h2>
           <span className="dr-muted">
-            Grok reads every published, public record and suggests the strongest
-            ones. If Grok is unavailable, a built-in ranking picks them instead.
-            Review the picks below before showing them on the home page.
+            The AI reads every published, public record and suggests the
+            strongest ones. If it is unavailable, a built-in ranking picks them
+            instead. Review the picks below before showing them on the home
+            page.
           </span>
         </div>
       </div>

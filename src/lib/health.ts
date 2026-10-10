@@ -7,7 +7,7 @@ import {
   put as putBlob,
 } from "@vercel/blob";
 import { getPayload, type CollectionSlug, type GlobalSlug } from "payload";
-import { xaiConfig } from "./ai/xai";
+import { aiConfig } from "./ai/client";
 import {
   BLOB_STORE_MISSING,
   BLOB_STORE_PRIVATE,
@@ -111,13 +111,13 @@ function configurationChecks(): Check[] {
           : "Not set — uploads are saved to the local disk.",
     ),
     // Neutral wording: the public status page doesn't say which service
-    // powers the highlights (this is the XAI_API_KEY setting).
+    // powers the highlights (GROQ_API_KEY or XAI_API_KEY).
     set(
       "Highlights key",
       true,
-      xaiConfig().apiKey
+      aiConfig().apiKey
         ? "Set"
-        : "Not set — automatic highlights are off (optional).",
+        : "Not set — highlights use the built-in ranking (optional).",
       true,
     ),
     set(
