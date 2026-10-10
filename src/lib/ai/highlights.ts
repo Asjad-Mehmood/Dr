@@ -3,7 +3,10 @@ import {
   highlightCollections,
   highlightSections,
 } from "@/cms/globals/AiHighlights";
+import { rankLocally } from "./local-ranking";
 import { AiError, xaiJson } from "./xai";
+
+export const BUILT_IN_RANKING = "Built-in ranking";
 
 type HighlightCollection = (typeof highlightCollections)[number]["value"];
 type SectionKey = (typeof highlightSections)[number]["value"];
@@ -200,55 +203,100 @@ export async function analyzeHighlights(payload: Payload) {
     academic: counts["academic-records"] ?? 0,
   };
 
-  const { data, model } = await xaiJson<AiAnswer>({
-    schemaName: "portfolio_highlights",
-    schema,
-    messages: [
-      {
-        role: "system",
-        content: [
-          `You are the editor of ${name}'s professional medical portfolio website (${settings.role ?? "MBBS student"}, ${settings.institution ?? ""}).`,
-          `Choose the ${maxItems} records that best show ${name}'s strengths to visitors such as faculty, hospitals and training programmes: verified impact (people served), awards and distinctions, research outputs, leadership roles, community service, and consistent growth. Prefer substance over routine attendance, verified numbers over claims, and recent items when strength is similar. Cover different kinds of work when possible.`,
-          "Also name the single strongest section of the portfolio and say why, based on the records and section counts.",
-          "Rules: use only facts present in the data — never invent numbers, roles, awards or outcomes. Refer to records only by their exact `ref`. Write in clear, warm, professional English in the third person. Each reason is one sentence of at most 25 words. Each label is 1–3 words (e.g. Research, Leadership, Community impact). The intro is one or two sentences (at most 40 words) for a home-page section introducing the highlights. Make no medical or health claims beyond what the records state.",
-        ].join("\n"),
-      },
-      {
-        role: "user",
-        content: JSON.stringify({ sectionCounts, records }),
-      },
-    ],
-  });
+  const toPick = (ref: string, labelText: unknown, reasonText: unknown) => {
+    const { collection, doc } = byRef.get(ref)!;
+    return {
+      collection,
+      docId: doc.id,
+      title: titleOf(doc, collection),
+      label: clip(String(labelText ?? ""), 30),
+      reason: clip(String(reasonText ?? ""), 220),
+    };
+  };
 
-  // Keep only picks that point at real, published records, without repeats.
-  const seen = new Set<string>();
-  const picks = (Array.isArray(data.picks) ? data.picks : [])
-    .filter(
-      (pick) =>
-        byRef.has(pick.ref) && !seen.has(pick.ref) && seen.add(pick.ref),
-    )
-    .slice(0, maxItems)
-    .map((pick) => {
-      const { collection, doc } = byRef.get(pick.ref)!;
-      return {
-        collection,
-        docId: doc.id,
-        title: titleOf(doc, collection),
-        label: clip(String(pick.label ?? ""), 30),
-        reason: clip(String(pick.reason ?? ""), 220),
-      };
+  let result: {
+    intro: string;
+    section: { key: string; label: string; reason: string } | null;
+    picks: ReturnType<typeof toPick>[];
+    model: string;
+    notice: string | null;
+  };
+  try {
+    const { data, model } = await xaiJson<AiAnswer>({
+      schemaName: "portfolio_highlights",
+      schema,
+      messages: [
+        {
+          role: "system",
+          content: [
+            `You are the editor of ${name}'s professional medical portfolio website (${settings.role ?? "MBBS student"}, ${settings.institution ?? ""}).`,
+            `Choose the ${maxItems} records that best show ${name}'s strengths to visitors such as faculty, hospitals and training programmes: verified impact (people served), awards and distinctions, research outputs, leadership roles, community service, and consistent growth. Prefer substance over routine attendance, verified numbers over claims, and recent items when strength is similar. Cover different kinds of work when possible.`,
+            "Also name the single strongest section of the portfolio and say why, based on the records and section counts.",
+            "Rules: use only facts present in the data — never invent numbers, roles, awards or outcomes. Refer to records only by their exact `ref`. Write in clear, warm, professional English in the third person. Each reason is one sentence of at most 25 words. Each label is 1–3 words (e.g. Research, Leadership, Community impact). The intro is one or two sentences (at most 40 words) for a home-page section introducing the highlights. Make no medical or health claims beyond what the records state.",
+          ].join("\n"),
+        },
+        {
+          role: "user",
+          content: JSON.stringify({ sectionCounts, records }),
+        },
+      ],
     });
-  if (picks.length === 0) {
-    throw new AiError(
-      "The AI did not return any usable picks. Please try again.",
-      502,
+
+    // Keep only picks that point at real, published records, without repeats.
+    const seen = new Set<string>();
+    const picks = (Array.isArray(data.picks) ? data.picks : [])
+      .filter(
+        (pick) =>
+          byRef.has(pick.ref) && !seen.has(pick.ref) && seen.add(pick.ref),
+      )
+      .slice(0, maxItems)
+      .map((pick) => toPick(pick.ref, pick.label, pick.reason));
+    if (picks.length === 0) {
+      throw new AiError("The AI did not return any usable picks.", 502);
+    }
+    result = {
+      intro: String(data.intro ?? ""),
+      section: data.strongestSection ?? null,
+      picks,
+      model,
+      notice: null,
+    };
+  } catch (error) {
+    // xAI missing, failing or unhelpful: fall back to the built-in ranking.
+    const why =
+      error instanceof AiError
+        ? error.message
+        : "The AI service could not be used.";
+    if (!(error instanceof AiError)) {
+      payload.logger.error(
+        { err: error },
+        "AI highlights fell back to local ranking",
+      );
+    }
+    const ranking = rankLocally(
+      [...byRef.entries()].map(([ref, { collection, doc }]) => ({
+        ref,
+        collection,
+        doc,
+        title: titleOf(doc, collection),
+      })),
+      maxItems,
     );
+    result = {
+      intro: ranking.intro,
+      section: ranking.strongestSection,
+      picks: ranking.picks.map((pick) =>
+        toPick(pick.ref, pick.label, pick.reason),
+      ),
+      model: BUILT_IN_RANKING,
+      notice: `${why} The built-in ranking was used instead.`,
+    };
   }
 
-  const section = data.strongestSection;
-  const sectionKey = highlightSections.some((s) => s.value === section?.key)
-    ? section.key
-    : undefined;
+  const section = result.section;
+  const sectionKey = highlightSections.find(
+    (s) => s.value === section?.key,
+  )?.value;
 
   // A new set of picks always needs a fresh review before it goes live.
   await payload.updateGlobal({
@@ -256,19 +304,30 @@ export async function analyzeHighlights(payload: Payload) {
     overrideAccess: true,
     data: {
       showOnHome: false,
-      intro: clip(String(data.intro ?? ""), 300),
+      intro: clip(result.intro, 300),
       strongestSection: {
         key: sectionKey ?? null,
-        label: sectionKey ? clip(String(section.label ?? ""), 80) : null,
-        reason: sectionKey ? clip(String(section.reason ?? ""), 300) : null,
+        label:
+          sectionKey && section ? clip(String(section.label ?? ""), 80) : null,
+        reason:
+          sectionKey && section
+            ? clip(String(section.reason ?? ""), 300)
+            : null,
       },
-      picks,
+      picks: result.picks,
       lastAnalyzedAt: new Date().toISOString(),
-      model,
+      model: result.model,
       recordsAnalyzed: byRef.size,
-      lastError: null,
+      lastError: result.notice,
     },
   });
 
-  return { picks: picks.length, model, recordsAnalyzed: byRef.size };
+  return {
+    picks: result.picks.length,
+    model: result.model,
+    source:
+      result.model === BUILT_IN_RANKING ? ("local" as const) : ("ai" as const),
+    notice: result.notice,
+    recordsAnalyzed: byRef.size,
+  };
 }
